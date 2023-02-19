@@ -74,23 +74,23 @@ class Postfix:
             return
 
         stack = []
-        postfix = []
+        postfix = ""
 
         for token in self.expression:
             if token in self.alphabet:
-                postfix.append(token)
+                postfix += token
             elif token == '(':
                 stack.append(token)
             elif token == ')':
                 while stack and stack[-1] != '(':
-                    postfix.append(stack.pop())
+                    postfix += stack.pop()
                 stack.pop()
             else:
                 while stack and self.precedence[token] <= self.precedence[stack[-1]]:
-                    postfix.append(stack.pop())
+                    postfix += stack.pop()
                 stack.append(token)
 
         while stack:
-            postfix.append(stack.pop())
+            postfix+=stack.pop()
 
         return postfix
