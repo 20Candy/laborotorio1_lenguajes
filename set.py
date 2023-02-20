@@ -23,3 +23,8 @@ class Set:
 
     def AddItem(self, elemento):
         self.Elementos.append(elemento)
+
+    def update(self, A):
+        for elemento in A.Elementos:
+            if elemento not in self.Elementos:
+                self.Elementos.append(elemento)
