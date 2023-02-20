@@ -71,18 +71,39 @@ class AFN(Automata):
             return self
         
         if nodo.simbolo == '?':
-            fragmento_izquierdo = self.Thompson(nodo.hijo_izq)
-            # crear un nuevo estado inicial y final, con transiciones ε hacia el estado inicial del fragmento y desde el estado final del fragmento hacia el nuevo estado final. Añadir una transición ε directa desde el nuevo estado inicial hacia el nuevo estado final. Retornar el nuevo autómata
-            estado_inicial = Estado(self.contador, 'normal')
-            estado_final = Estado(self.contador + 1, 'final')
-            self.agregar_estado(estado_inicial)
-            self.agregar_estado_final(estado_final)
-            self.agregar_simbolo('ε')
-            self.agregar_transicion(estado_inicial, fragmento_izquierdo.estado_inicial, 'ε')
-            self.agregar_transicion(fragmento_izquierdo.EstadosFinales.PopItem(), estado_final, 'ε')
-            self.agregar_transicion(estado_inicial, estado_final, 'ε')
-            self.estado_inicial = estado_inicial
+
+            estado1 = Estado(self.contador, 'normal')
+            self.agregar_estado(estado1)
             self.contador += 1
+            fragmento_izquierdo = self.Thompson(nodo.hijo_izq)
+            self.agregar_transicion(estado1, fragmento_izquierdo.estado_inicial, 'ε') 
+            
+            
+            estado2 = Estado(self.contador + 1, 'normal')
+            self.agregar_estado(estado2)
+            self.contador += 1
+            self.agregar_transicion(estado1, estado2, 'ε')
+
+            estado3 = Estado(self.contador + 1, 'normal')
+            self.agregar_estado(estado3)
+            self.contador += 1
+            self.agregar_transicion(estado2, estado3, 'ε')
+            self.agregar_estado_final(estado3)
+
+            # si hay mas de un estado final, agregar un estado y transiciones epsilon desde los estados finales hacia el nuevo estado final
+            if len(self.EstadosFinales.Elementos) > 1:
+                estados_finales = self.EstadosFinales.Elementos
+                self.cleanEstadoFinal()
+                estado_final = Estado(self.contador +1, 'final')
+                self.agregar_estado_final(estado_final)
+                self.agregar_simbolo('ε')
+                for estado in estados_finales:
+                    self.agregar_transicion(estado, estado_final, 'ε')
+                self.contador += 1
+
+            self.estado_inicial = estado1
+            self.agregar_simbolo('ε')
+            
             return self
 
         if nodo.simbolo == '*':
@@ -105,25 +126,39 @@ class AFN(Automata):
             self.agregar_transicion(estado_final_izquierdo, estado_destino, 'ε')
 
             
-            
             self.estado_inicial = estado_inicial
            
             return self
 
 
         if nodo.simbolo == '+':
-            fragmento_izquierdo = self.Thompson(nodo.hijo_izq)
-            #crear un nuevo estado inicial y final, con transiciones ε hacia el estado inicial del fragmento y desde el estado final del fragmento hacia el nuevo estado final. Añadir transiciones ε desde el nuevo estado inicial hacia el nuevo estado final y desde el estado final del fragmento hacia el estado inicial del fragmento. Retornar el nuevo autómata
-            estado_inicial = Estado(self.contador, 'normal')
-            estado_final = Estado(self.contador + 1, 'final')
-            self.agregar_estado(estado_inicial)
-            self.agregar_estado_final(estado_final)
-            self.agregar_simbolo('ε')
-            self.agregar_transicion(estado_inicial, fragmento_izquierdo.estado_inicial, 'ε')
-            self.agregar_transicion(fragmento_izquierdo.EstadosFinales.PopItem(), estado_final, 'ε')
-            self.agregar_transicion(estado_inicial, estado_final, 'ε')
-            self.estado_inicial = estado_inicial
+            estado = Estado(self.contador, 'normal')
+            estado_inicial = Estado(self.contador +1, 'normal')
+
+            self.agregar_estado(estado)
             self.contador += 1
+            self.agregar_simbolo(nodo.hijo_izq.simbolo)
+            self.agregar_transicion(estado, estado_inicial, nodo.hijo_izq.simbolo)
+
+            estado_inicial = Estado(self.contador, 'normal')
+            estado_destino = Estado(self.contador + 1, 'normal')
+            self.contador += 1
+            self.agregar_simbolo('ε')
+            self.agregar_transicion(estado_inicial, estado_destino, 'ε')
+
+            fragmento_izquierdo = self.Thompson(nodo.hijo_izq)
+            estado_final_izquierdo = fragmento_izquierdo.EstadosFinales.Elementos[-1]
+
+            estado_final = Estado(self.contador + 1, 'final')
+            self.agregar_estado_final(estado_final)
+            self.contador += 1
+
+            self.agregar_transicion(estado_final_izquierdo, estado_final, 'ε')
+            self.agregar_transicion(estado_inicial, estado_final, 'ε')
+            self.agregar_transicion(estado_final_izquierdo, estado_destino, 'ε')
+
+            
+            self.estado_inicial = estado_inicial
             return self
          
 

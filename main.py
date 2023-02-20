@@ -17,7 +17,7 @@ def main():
     # postfix = postfix_.ConvertToPostfix()
     # print(postfix)
 
-    postfix_ = Postfix("ab*ab*", alphabet, operators, precedence)
+    postfix_ = Postfix("(a|b)b(a+)c?", alphabet, operators, precedence)
     postfix = postfix_.ConvertToPostfix()
     print("Expresion Postfix:" + postfix)
 
