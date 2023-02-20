@@ -24,6 +24,9 @@ class Set:
     def AddItem(self, elemento):
         self.Elementos.append(elemento)
 
+    def PopItem(self):
+        return self.Elementos.pop()
+
     def update(self, A):
         for elemento in A.Elementos:
             if elemento not in self.Elementos:

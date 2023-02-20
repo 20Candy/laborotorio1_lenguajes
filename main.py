@@ -25,8 +25,8 @@ def main():
     arbol.construir_arbol()
 
     afn = AFN()
-    thompson = afn.construir_desde_arbol(arbol.nodo)
-    print("AFN:")
+    thompson = afn.Thompson(arbol.nodo)
+    thompson.graficar("thompson")
 
     # postfix_ = Postfix("0?(1?)?0*", alphabet, operators, precedence)
     # postfix = postfix_.ConvertToPostfix()

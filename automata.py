@@ -14,3 +14,16 @@ class Automata:
             if transicion.estado_origen == e and transicion.el_simbolo == s:
                 conjunto_destino = conjunto_destino.Union(transicion.estado_destino.EstadosAFN)
         return conjunto_destino
+
+
+    def agregar_estado(self, estado):
+        self.Estados.AddItem(estado)
+
+    def agregar_estado_final(self, estado):
+        self.EstadosFinales.AddItem(estado)
+
+    def agregar_simbolo(self, simbolo):
+        self.Simbolos.AddItem(simbolo)
+
+    def agregar_transicion(self, origen, destino, simbolo):
+        self.transiciones.append((origen, destino, simbolo))
