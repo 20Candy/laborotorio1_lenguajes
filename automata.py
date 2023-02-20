@@ -27,3 +27,6 @@ class Automata:
 
     def agregar_transicion(self, origen, destino, simbolo):
         self.transiciones.append((origen, destino, simbolo))
+
+    def cleanEstadoFinal(self):
+        self.EstadosFinales = Set()
