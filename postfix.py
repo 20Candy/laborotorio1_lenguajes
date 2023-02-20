@@ -35,8 +35,6 @@ class Postfix:
                     new_expr += "."
             new_expr += token
            
-
-        print("Expresion con concatenacion:" + new_expr)
         return new_expr
 
 

@@ -9,35 +9,26 @@ operators = ['|', '*', '+', '?', '(', ')', '.']
 precedence = {'(': 1, "(": 1, '|': 2, '.': 3, '*': 4, '+': 4, '?': 4}
 
 def main():
-    postfix_ = Postfix("(a|b)*a(a|b)(a|b)", alphabet, operators, precedence)
-    postfix = postfix_.ConvertToPostfix()
-    print("Expresion Postfix:" + postfix)
+    postfix_ = Postfix("aaaaaaa", alphabet, operators, precedence)
+    # postfix_ = Postfix("ab*ab*", alphabet, operators, precedence)
+    # postfix_ = Postfix("ab*ab*", alphabet, operators, precedence)
+    # postfix_ = Postfix("0?(1?)?0*", alphabet, operators, precedence)
+    # postfix_ = Postfix("(a*|b*)c", alphabet, operators, precedence)
+    # postfix_ = Postfix("(b|b)*abb(a|b)*", alphabet, operators, precedence)
+    # postfix_ = Postfix("(a|ε)b(a+)c?", alphabet, operators, precedence)
+    # postfix_ = Postfix("(a|b)*a(a|b)(a|b)", alphabet, operators, precedence)
 
+    postfix = postfix_.ConvertToPostfix()
+    print("\n======================================= Expresion Postfix =======================================")
+    print(postfix)
+
+    print("\n======================================= Arbol de Expresion =======================================")
     arbol = Arbol(postfix)
     arbol.construir_arbol()
 
+    print("\n============================================ Automata ============================================")
     afn = AFN()
-    thompson = afn.Thompson(arbol.nodo)
-    thompson.graficar("thompson")
-
-    # postfix_ = Postfix("ab*ab*", alphabet, operators, precedence)
-    # postfix_ = Postfix("0?(1?)?0*", alphabet, operators, precedence)
-    # postfix = postfix_.ConvertToPostfix()
-    # print(postfix)
-    # postfix_ = Postfix("(a*|b*)c", alphabet, operators, precedence)
-    # postfix = postfix_.ConvertToPostfix()
-    # print(postfix)
-    # postfix_ = Postfix("(b|b)*abb(a|b)*", alphabet, operators, precedence)
-    # postfix = postfix_.ConvertToPostfix()
-    # print(postfix)
-    # postfix_ = Postfix("(a|ε)b(a+)c?", alphabet, operators, precedence)
-    # postfix = postfix_.ConvertToPostfix()
-    # print(postfix)
-    # postfix_ = Postfix("(a|b)*a(a|b)(a|b)", alphabet, operators, precedence)
-    # postfix = postfix_.ConvertToPostfix()
-    # print(postfix)
-
-
+    afn.construir_afn(arbol.nodo)
 
 if __name__ == "__main__":
     main()

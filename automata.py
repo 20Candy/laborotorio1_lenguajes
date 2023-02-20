@@ -28,6 +28,22 @@ class Automata:
     def agregar_transicion(self, origen, destino, simbolo):
         self.transiciones.append((origen, destino, simbolo))
 
+    #para afn solo un estado final
     def setEstadoFinal(self, estado):
         self.EstadosFinales.clear()
         self.EstadosFinales.AddItem(estado)
+
+    def toString(self):
+        print("\n======================================= Estados =======================================")
+        for estado in self.Estados.Elementos:
+            print(estado)
+        print("\n===================================== Transiciones =====================================")
+        for transicion in self.transiciones:
+            print(transicion[0], " -> ", transicion[1], " -> ", transicion[2])
+        print("\n==================================== Estado inicial =====================================")
+        print(self.estado_inicial)
+        print("\n==================================== Estados finales ===================================")
+        for estado_final in self.EstadosFinales.Elementos:
+            print(estado_final)
+
+

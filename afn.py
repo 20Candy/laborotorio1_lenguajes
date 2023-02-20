@@ -9,7 +9,29 @@ class AFN(Automata):
         super().__init__()
         self.contador = 0
 
+    def construir_afn(self, nodo):
+        afn = self.Thompson(nodo)
 
+        if afn is not None:
+
+            #eliminar estados repetidos
+            afn.Estados.Elementos = list(set(afn.Estados.Elementos))
+
+            #ordenar estados
+            afn.Estados.Elementos.sort(key=lambda x: x.id)
+
+            #agregar estado inicial
+            afn.Estados.Elementos[0].tipo = 'inicial'
+
+            #agregar estados finales
+            afn.agregar_estado_final(afn.Estados.Elementos[-1])
+            afn.Estados.Elementos[-1].tipo = 'final'
+
+        afn.toString()
+        afn.graficar(afn,"AFN")
+
+        return afn
+            
     def Thompson(self, nodo):
 
         #si simbolo terminal
@@ -24,7 +46,7 @@ class AFN(Automata):
 
             #agregar estado final del afn
             estado_final = Estado(self.contador + 1, 'normal')
-            afn.agregar_estado_final(estado_final)
+            afn.setEstadoFinal(estado_final)
             afn.agregar_estado(estado_final)
             
             self.contador += 1
@@ -59,7 +81,7 @@ class AFN(Automata):
 
             #agregar estado final de |
             estado_final = Estado(self.contador + 1, 'normal')
-            afn.agregar_estado_final(estado_final)
+            afn.setEstadoFinal(estado_final)
             afn.agregar_estado(estado_final)
             self.contador += 1
 
@@ -144,7 +166,7 @@ class AFN(Automata):
             
             #agregar estado final de ?
             estado_final = Estado(self.contador + 1, 'normal')
-            afn.agregar_estado_final(estado_final)
+            afn.setEstadoFinal(estado_final)
             afn.agregar_estado(estado_final)
             self.contador += 1
 
@@ -163,6 +185,9 @@ class AFN(Automata):
 
             #unir transiciones del afn actual con el afn de los hijos
             afn.transiciones = afn.transiciones + afn_izquierdo.transiciones
+
+            #estado final 
+            afn.setEstadoFinal(afn_izquierdo.EstadosFinales.Elementos[-1])
                         
             return afn
 
@@ -183,7 +208,7 @@ class AFN(Automata):
 
             #agregar estado final
             estado_final = Estado(self.contador + 1, 'normal')
-            afn.agregar_estado_final(estado_final)
+            afn.setEstadoFinal(estado_final)
             afn.agregar_estado(estado_final)
             self.contador += 1
 
@@ -203,6 +228,9 @@ class AFN(Automata):
 
             #unir transiciones del afn actual con el afn de los hijos
             afn.transiciones = afn.transiciones + afn_izquierdo.transiciones
+
+            #estado final
+            afn.setEstadoFinal(afn_izquierdo.EstadosFinales.Elementos[-1])
            
             return afn
 
@@ -234,7 +262,7 @@ class AFN(Automata):
 
             #agregar estado final
             estado_final = Estado(self.contador + 1, 'normal')
-            afn.agregar_estado_final(estado_final)
+            afn.setEstadoFinal(estado_final)
             afn.agregar_estado(estado_final)
             self.contador += 1
 
@@ -285,23 +313,25 @@ class AFN(Automata):
         return False    
 
 
-    def graficar(self, nombre_archivo):
-
-        from graphviz import Digraph
+    def graficar(self,afn, nombre_archivo):
 
         g = Digraph('AFN', filename=nombre_archivo)
+        g.attr(rankdir='LR')
 
         # Agregar los estados al grafo
-        for estado in self.Estados.Elementos:
-            if estado.tipo == 'final':
-                g.node(str(estado.id), label=str(estado.id), shape='doublecircle')
+        for estado in afn.Estados.Elementos:
+            if estado.tipo == 'inicial':
+                g.node(str(estado.id), shape='point')
+                g.node ('', shape='none', height='0', width='0')
+                g.edge('', str(estado.id))
+
+            elif estado.tipo == 'final':
+                g.node(str(estado.id), shape='doublecircle')
             else:
-                g.node(str(estado.id), label=str(estado.id), shape='circle')
+                g.node(str(estado.id), shape='circle')
 
         # Agregar las transiciones al grafo
-        for transicion in self.transiciones:
+        for transicion in afn.transiciones:
             g.edge(str(transicion[0].id), str(transicion[1].id), label=transicion[2])
 
         g.view()
-
-

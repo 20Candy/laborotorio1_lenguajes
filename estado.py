@@ -5,3 +5,6 @@ class Estado:
         self.id = id
         self.tipo = tipo
         self.EstadosAFN = Set()
+
+    def __str__(self):
+        return (str(self.id)+ " " + self.tipo)

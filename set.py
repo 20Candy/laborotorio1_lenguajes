@@ -31,3 +31,7 @@ class Set:
 
     def clear(self):
         self.Elementos = []
+
+    def __str__(self):
+        return str(self.Elementos)
+        
