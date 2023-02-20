@@ -7,7 +7,7 @@ digraph AFN {
 	14 [label=14 shape=circle]
 	1 -> 2 [label=a]
 	0 -> 1 [label="ε"]
-	3 -> 4 [label=b]
+	3 -> 4 [label="ε"]
 	0 -> 3 [label="ε"]
 	2 -> 5 [label="ε"]
 	4 -> 5 [label="ε"]

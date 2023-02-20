@@ -1,7 +1,6 @@
 from nodo import Nodo
 
-import pydot
-
+from graphviz import Digraph
 
 class Arbol:
     def __init__(self, expresion):
@@ -60,37 +59,23 @@ class Arbol:
 
 
     def graficar_arbol(self, nodo):
-        graph = pydot.Dot(graph_type='graph')
-        self.graficar_nodo(nodo, graph)
-        graph.write_png('arbol.png')
+        dot = Digraph(comment='Árbol sintáctico')
+        self.graficar_nodo(nodo, dot)
+        dot.render('arbol', view=True)
 
-    
-    def graficar_nodo(self, nodo, graph):
+    def graficar_nodo(self, nodo, dot):
         if nodo is None:
             return
 
-        # Crear el nodo raíz con un identificador fijo y el símbolo del nodo raíz
-        if nodo == self.nodo:
-            nodo_actual = pydot.Node("raiz", label=nodo.simbolo)
-            graph.add_node(nodo_actual)
-        else:
-            # Crear el nodo con un identificador incremental y el símbolo del nodo
-            nodo_actual = pydot.Node(str(self.contador), label=nodo.simbolo)
-            graph.add_node(nodo_actual)
+        # Crear el nodo con el símbolo del nodo
+        dot.node(str(id(nodo)), label=nodo.simbolo)
 
         if nodo.hijo_izq is not None:
-            self.contador += 1
-            nodo_izq = pydot.Node(str(self.contador), label=nodo.hijo_izq.simbolo)
-            graph.add_node(nodo_izq)
-            self.graficar_nodo(nodo.hijo_izq, graph)
-            graph.add_edge(pydot.Edge(nodo_actual, nodo_izq))
+            self.graficar_nodo(nodo.hijo_izq, dot)
+            dot.edge(str(id(nodo)), str(id(nodo.hijo_izq)))
 
         if nodo.hijo_der is not None:
-            self.contador += 1
-            nodo_der = pydot.Node(str(self.contador), label=nodo.hijo_der.simbolo)
-            graph.add_node(nodo_der)
-            self.graficar_nodo(nodo.hijo_der, graph)
-            graph.add_edge(pydot.Edge(nodo_actual, nodo_der))
-
+            self.graficar_nodo(nodo.hijo_der, dot)
+            dot.edge(str(id(nodo)), str(id(nodo.hijo_der)))
 
     
