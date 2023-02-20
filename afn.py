@@ -47,12 +47,6 @@ class AFN(Automata):
             afn.estado_inicial = Estado(self.contador, 'normal')
             afn.agregar_estado(afn.estado_inicial)
             self.contador += 1
-            fragmento_izquierdo = self.Thompson(nodo.hijo_izq)
-            self.agregar_transicion(estado1, fragmento_izquierdo.estado_inicial, 'ε') 
-            
-            
-            estado2 = Estado(self.contador + 1, 'normal')
-            self.agregar_estado(estado2)
 
             #afn del hijo izquierdo
             afn_izquierdo = self.Thompson(nodo.hijo_izq)
