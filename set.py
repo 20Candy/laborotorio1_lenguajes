@@ -28,3 +28,6 @@ class Set:
         for elemento in A.Elementos:
             if elemento not in self.Elementos:
                 self.Elementos.append(elemento)
+
+    def clear(self):
+        self.Elementos = []
