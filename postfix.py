@@ -40,26 +40,35 @@ class Postfix:
 
     # validar expresion
     def ValidateExpression(self):
+
         # validar que no haya caracteres invalidos
         for token in self.expression:
             if token not in self.alphabet and token not in self.operators:
                 raise ValueError("Caracter invalido: " + token)
-        
+
         # validar que no haya parentesis sin cerrar
         if self.expression.count('(') != self.expression.count(')'):
             raise ValueError("Parentesis sin cerrar")
 
-        #validar que antes de operador binario haya un paretensis de cierre, un self.alphabet o un ? * +
+        #validar que si es un operador binario, no este al inicio o al final
         for i, token in enumerate(self.expression):
-            if i > 0:
-                if token in "|." and self.expression[i-1] in self.operators and self.expression[i-1] != ')' and self.expression[i-1] != '?' and self.expression[i-1] != '*' and self.expression[i-1] != '+':
-                    raise ValueError("Operador binario sin operando: " + self.expression[i-1] + token)
-        
-        #validar que antes de un operador unario haya un self.alphabet o un parentesis de cierre
+            if token in "|." and token != '(' and token != ')':
+                if i == 0 or i == len(self.expression)-1:
+                    raise ValueError("Operador binario no puede estar al inicio o al final")
+
+        #validar que si es un operador unario, debe tener un caracter o ) a la izquierda
         for i, token in enumerate(self.expression):
-            if i > 0:
-                if token in "+*?" and self.expression[i-1] in self.operators and self.expression[i-1] != ')':
-                    raise ValueError("Operador unario sin operando: " + self.expression[i-1] + token)
+            if token in "+*?":
+                if self.expression[i-1] not in self.alphabet and self.expression[i-1] != ')':
+                    raise ValueError("Operador unario debe tener un caracter o ) a la izquierda")
+
+        #validar que si es un operador binario, debe tener un caracter o ) a la izquierda y un caracter o ( a la derecha
+        for i, token in enumerate(self.expression):
+            if token in ".|":
+                if self.expression[i-1] not in self.alphabet and self.expression[i-1] != ')':
+                    raise ValueError("Operador binario debe tener un caracter o ) a la izquierda")
+                if self.expression[i+1] not in self.alphabet and self.expression[i+1] != '(':
+                    raise ValueError("Operador binario debe tener un caracter o ( a la derecha")
 
 
     # convertir a postfix
@@ -67,9 +76,10 @@ class Postfix:
 
         try:
             self.ValidateExpression()
+
         except ValueError as e:
             print(e)
-            return
+            return None
 
         stack = []
         postfix = ""
