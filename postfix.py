@@ -50,6 +50,12 @@ class Postfix:
         if self.expression.count('(') != self.expression.count(')'):
             raise ValueError("Parentesis sin cerrar")
 
+        # validar que no haya un parentesis de cierre antes de un parentesis de apertura
+        for i, token in enumerate(self.expression):
+            if token == ')':
+                if self.expression[i-1] == '(':
+                    raise ValueError("Parentesis vacio")
+
         #validar que si es un operador binario, no este al inicio o al final
         for i, token in enumerate(self.expression):
             if token in "|." and token != '(' and token != ')':
@@ -65,9 +71,9 @@ class Postfix:
         #validar que si es un operador binario, debe tener un caracter o ) a la izquierda y un caracter o ( a la derecha
         for i, token in enumerate(self.expression):
             if token in ".|":
-                if self.expression[i-1] not in self.alphabet and self.expression[i-1] != ')':
+                if self.expression[i-1] not in self.alphabet and self.expression[i-1] != ')' and self.expression[i-1] not in "+*?":
                     raise ValueError("Operador binario debe tener un caracter o ) a la izquierda")
-                if self.expression[i+1] not in self.alphabet and self.expression[i+1] != '(':
+                if self.expression[i+1] not in self.alphabet and self.expression[i+1] != '(' and self.expression[i+1] not in "+*?":
                     raise ValueError("Operador binario debe tener un caracter o ( a la derecha")
 
 
