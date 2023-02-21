@@ -76,6 +76,12 @@ class Postfix:
                 if self.expression[i+1] not in self.alphabet and self.expression[i+1] != '(' and self.expression[i+1] not in "+*?":
                     raise ValueError("Operador binario debe tener un caracter o ( a la derecha")
 
+        #validar que si es un operador unario no puede estar al principio
+        for i, token in enumerate(self.expression):
+            if token in "+*?":
+                if i == 0:
+                    raise ValueError("Operador unario no puede estar al principio")
+
 
     # convertir a postfix
     def ConvertToPostfix(self):

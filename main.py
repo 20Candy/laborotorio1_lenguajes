@@ -9,10 +9,10 @@ operators = ['|', '*', '+', '?', '(', ')', '.']
 precedence = {'(': 1, "(": 1, '|': 2, '.': 3, '*': 4, '+': 4, '?': 4}
 
 def main():
-    postfix_ = Postfix("(a|b)*a(a|b)(a|b)", alphabet, operators, precedence)
-    #"?",")cd(","(a|(b|c)?","a|","|b","a|b)*"
+    # postfix_ = Postfix("(a|b)*a(a|b)(a|b)", alphabet, operators, precedence)
+    # #"?",")cd(","(a|(b|c)?","a|","|b","a|b)*"
     # postfix_ = Postfix("ab*ab*", alphabet, operators, precedence)
-    # postfix_ = Postfix("0?(1?)?0*", alphabet, operators, precedence)
+    postfix_ = Postfix("0?(1?)?0*", alphabet, operators, precedence)
     # postfix_ = Postfix("(a*|b*)c", alphabet, operators, precedence)
     # postfix_ = Postfix("(b|b)*abb(a|b)*", alphabet, operators, precedence)
     # postfix_ = Postfix("(a|ε)b(a+)c?", alphabet, operators, precedence)
