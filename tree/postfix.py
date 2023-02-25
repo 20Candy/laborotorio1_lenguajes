@@ -10,8 +10,19 @@ class Postfix:
     def FormatExpression(self, expression):
         new_expression = expression.lower()
         new_expression = new_expression.replace(" ", "")
+        new_expression = self.CheckEpislon(new_expression)
         new_expression = self.AddConcatenation(new_expression)
         return new_expression
+    
+    def CheckEpislon(self, expression):
+        # for expression if char is E or ϵ replace with ε
+        new_expr = ""
+        for i, token in enumerate(expression):
+            if token == 'e' or token == 'ϵ':
+                new_expr = expression.replace(token, 'ε')
+
+        return new_expr
+
 
     def AddConcatenation(self, expression):
         new_expr = ""

@@ -2,7 +2,7 @@ from tree.postfix import Postfix
 from tree.tree import Tree
 from automaton.afn import Afn
 
-alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'ε']
+alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'ε', 'E', 'ϵ']
 operators = ['|', '*', '+', '?', '(', ')', '.']
 precedence = {'(': 1, "(": 1, '|': 2, '.': 3, '*': 4, '+': 4, '?': 4}
 
@@ -17,7 +17,6 @@ def main():
     if(postfix == None):
         return
     print(postfix)
-
 
     tree = Tree(postfix)
     tree.BuildTree()
