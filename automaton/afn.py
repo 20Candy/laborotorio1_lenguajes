@@ -1,5 +1,5 @@
-from automaton import Automaton
-from state import State
+from automaton.automaton import Automaton
+from utils.state import State
 from graphviz import Digraph
 
 class Afn(Automaton):

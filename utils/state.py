@@ -1,4 +1,4 @@
-from set import Set
+from utils.set import Set
 
 class State:
     def __init__(self, id, type):

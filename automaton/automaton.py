@@ -1,4 +1,4 @@
-from set import Set
+from utils.set import Set
 
 class Automaton:
     def __init__(self):

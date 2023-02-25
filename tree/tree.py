@@ -1,4 +1,4 @@
-from node import Node
+from tree.node import Node
 from graphviz import Digraph
 
 class Tree:
