@@ -62,10 +62,11 @@ class Postfix:
                 if i == 0 or i == len(self.expression)-1:
                     raise ValueError("Operador binario no puede estar al inicio o al final")
 
-        #validar que si es un operador unario, debe tener un caracter o ) a la izquierda
+        #validar que si es un operador unario, debe tener un caracter o ) a la izquierda o un operador unario a la izquierda
+        
         for i, token in enumerate(self.expression):
             if token in "+*?":
-                if self.expression[i-1] not in self.alphabet and self.expression[i-1] != ')':
+                if self.expression[i-1] not in self.alphabet and self.expression[i-1] != ')' and self.expression[i-1] not in "+*?":
                     raise ValueError("Operador unario debe tener un caracter o ) a la izquierda")
 
         #validar que si es un operador binario, debe tener un caracter o ) a la izquierda y un caracter o ( a la derecha

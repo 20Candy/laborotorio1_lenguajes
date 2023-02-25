@@ -231,9 +231,6 @@ class AFN(Automata):
 
             #unir transiciones del afn actual con el afn de los hijos
             afn.transiciones = afn.transiciones + afn_izquierdo.transiciones
-
-            #estado final
-            afn.setEstadoFinal(afn_izquierdo.EstadosFinales.Elementos[-1])
            
             return afn
 
