@@ -15,7 +15,10 @@ class AFN(Automata):
         if afn is not None:
 
             #eliminar estados repetidos
-            afn.Estados.Elementos = list(set(afn.Estados.Elementos))
+            for estado in afn.Estados.Elementos:
+                for estado2 in afn.Estados.Elementos:
+                    if estado.id == estado2.id and estado is not estado2:
+                        afn.Estados.Elementos.remove(estado2)
 
             #ordenar estados
             afn.Estados.Elementos.sort(key=lambda x: x.id)
@@ -24,7 +27,7 @@ class AFN(Automata):
             afn.Estados.Elementos[0].tipo = 'inicial'
 
             #agregar estados finales
-            afn.agregar_estado_final(afn.Estados.Elementos[-1])
+            afn.setEstadoFinal(afn.Estados.Elementos[-1])
             afn.Estados.Elementos[-1].tipo = 'final'
 
         afn.toString()
@@ -120,6 +123,9 @@ class AFN(Automata):
             #afn del hijo derecho
             afn_derecho = self.Thompson(nodo.hijo_der)
 
+            #estado final afn
+            afn.setEstadoFinal(afn_derecho.EstadosFinales.Elementos[-1])
+
             #unir estados del afn actial con el afn de los hijos
             afn.Estados = afn.Estados.Union(afn_izquierdo.Estados)
             afn.Estados = afn.Estados.Union(afn_derecho.Estados)
@@ -130,6 +136,7 @@ class AFN(Automata):
 
             #unir transiciones del afn actual con el afn de los hijos
             afn.transiciones = afn.transiciones + afn_izquierdo.transiciones + afn_derecho.transiciones
+            
                         
 
             return afn
