@@ -174,6 +174,9 @@ class AFN(Automata):
             afn.agregar_transicion(afn_izquierdo.EstadosFinales.Elementos[-1], estado_final, 'ε')
             afn.agregar_transicion(estado_intermedio2, estado_final, 'ε')
 
+            #agregar el nuevo estado final al hijo izquierdo
+            afn_izquierdo.setEstadoFinal(estado_final)
+
             #agregar simbolo del afn
             afn.agregar_simbolo('ε')
 
@@ -321,7 +324,7 @@ class AFN(Automata):
         # Agregar los estados al grafo
         for estado in afn.Estados.Elementos:
             if estado.tipo == 'inicial':
-                g.node(str(estado.id), shape='point')
+                g.node(str(estado.id), shape='circle')
                 g.node ('', shape='none', height='0', width='0')
                 g.edge('', str(estado.id))
 
