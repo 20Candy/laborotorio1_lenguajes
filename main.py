@@ -1,9 +1,7 @@
 from postfix import Postfix
-from arbol import Arbol
-from afn import AFN
+from tree import Tree
+from afn import Afn
 
-
-#alfabeto, operadores y precedencia
 alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'ε']
 operators = ['|', '*', '+', '?', '(', ')', '.']
 precedence = {'(': 1, "(": 1, '|': 2, '.': 3, '*': 4, '+': 4, '?': 4}
@@ -20,14 +18,12 @@ def main():
         return
     print(postfix)
 
-    # print("\n======================================= Arbol de Expresion =======================================")
 
-    arbol = Arbol(postfix)
-    arbol.construir_arbol()
+    tree = Tree(postfix)
+    tree.BuildTree()
 
-    # print("\n============================================ Automata ============================================")
-    afn = AFN()
-    afn.construir_afn(arbol.nodo)
+    afn = Afn()
+    afn.BuildAfn(tree.node)
 
 if __name__ == "__main__":
     main()

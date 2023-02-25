@@ -1,344 +1,229 @@
-from automata import Automata
-from estado import Estado
-from transicion import Transicion
-
+from automaton import Automaton
+from state import State
 from graphviz import Digraph
 
-class AFN(Automata):
+class Afn(Automaton):
     def __init__(self):
         super().__init__()
-        self.contador = 0
+        self.counter = 0
 
-    def construir_afn(self, nodo):
+    def BuildAfn(self, nodo):
         afn = self.Thompson(nodo)
 
         if afn is not None:
+            for state in afn.states.elements:
+                for state2 in afn.states.elements:
+                    if state.id == state2.id and state is not state2:
+                        afn.states.elements.remove(state2)
 
-            #eliminar estados repetidos
-            for estado in afn.Estados.Elementos:
-                for estado2 in afn.Estados.Elementos:
-                    if estado.id == estado2.id and estado is not estado2:
-                        afn.Estados.Elementos.remove(estado2)
-
-            #ordenar estados
-            afn.Estados.Elementos.sort(key=lambda x: x.id)
-
-            #agregar estado inicial
-            afn.Estados.Elementos[0].tipo = 'inicial'
-
-            #agregar estados finales
-            afn.setEstadoFinal(afn.Estados.Elementos[-1])
-            afn.Estados.Elementos[-1].tipo = 'final'
+            afn.states.elements.sort(key=lambda x: x.id)
+            afn.states.elements[0].type = 'inicial'
+            afn.setSingleFinalState(afn.states.elements[-1])
+            afn.states.elements[-1].type = 'final'
 
         afn.toString()
-        afn.graficar(afn,"AFN")
+        afn.toGraph(afn,"AFN")
 
         return afn
             
     def Thompson(self, nodo):
 
-        #si simbolo terminal
-        if nodo.hijo_izq is None and nodo.hijo_der is None:
+        if nodo.left_child is None and nodo.right_child is None:
 
-            #crear un afn
-            afn = AFN()
+            afn = Afn()
 
-            #agregar estado inicial del afn
-            afn.estado_inicial = Estado(self.contador, 'normal')
-            afn.agregar_estado(afn.estado_inicial)
+            afn.initialState = State(self.counter, 'normal')
+            afn.addState(afn.initialState)
 
-            #agregar estado final del afn
-            estado_final = Estado(self.contador + 1, 'normal')
-            afn.setEstadoFinal(estado_final)
-            afn.agregar_estado(estado_final)
+            finalStates = State(self.counter + 1, 'normal')
+            afn.setSingleFinalState(finalStates)
+            afn.addState(finalStates)
             
-            self.contador += 1
+            self.counter += 1
 
-            #agregar transiciones del afn
-            afn.agregar_transicion(afn.estado_inicial, estado_final, nodo.simbolo)
-            
-            #agregar simbolo del afn
-            afn.agregar_simbolo(nodo.simbolo)
-
+            afn.addTransition(afn.initialState, finalStates, nodo.symbol)
+            afn.addSymbol(nodo.symbol)
 
             return afn
             
-        if nodo.simbolo == '|':
+        if nodo.symbol == '|':
 
-            #crear un afn
-            afn = AFN()
+            afn = Afn()
 
-            #agregar estado inicial del afn
-            afn.estado_inicial = Estado(self.contador, 'normal')
-            afn.agregar_estado(afn.estado_inicial)
-            self.contador += 1
+            afn.initialState = State(self.counter, 'normal')
+            afn.addState(afn.initialState)
+            self.counter += 1
 
-            #afn del hijo izquierdo
-            afn_izquierdo = self.Thompson(nodo.hijo_izq)
-            afn.agregar_transicion(afn.estado_inicial, afn_izquierdo.estado_inicial, 'ε')
-            self.contador += 1
+            afn_left = self.Thompson(nodo.left_child)
+            afn.addTransition(afn.initialState, afn_left.initialState, 'ε')
+            self.counter += 1
 
-            #afn del hijo derecho
-            afn_derecho = self.Thompson(nodo.hijo_der)
-            afn.agregar_transicion(afn.estado_inicial, afn_derecho.estado_inicial, 'ε')
+            afn_right = self.Thompson(nodo.right_child)
+            afn.addTransition(afn.initialState, afn_right.initialState, 'ε')
 
-            #agregar estado final de |
-            estado_final = Estado(self.contador + 1, 'normal')
-            afn.setEstadoFinal(estado_final)
-            afn.agregar_estado(estado_final)
-            self.contador += 1
+            finalStates = State(self.counter + 1, 'normal')
+            afn.setSingleFinalState(finalStates)
+            afn.addState(finalStates)
+            self.counter += 1
 
-            #agregar transiciones de los hijos
-            afn.agregar_transicion(afn_izquierdo.EstadosFinales.Elementos[-1], estado_final, 'ε')
-            afn.agregar_transicion(afn_derecho.EstadosFinales.Elementos[-1], estado_final, 'ε')
+            afn.addTransition(afn_left.finalStates.elements[-1], finalStates, 'ε')
+            afn.addTransition(afn_right.finalStates.elements[-1], finalStates, 'ε')
 
-            #agregar simbolo del afn
-            afn.agregar_simbolo('ε')
+            afn.addSymbol('ε')
 
-            #unir estados del afn actial con el afn de los hijos
-            afn.Estados = afn.Estados.Union(afn_izquierdo.Estados)
-            afn.Estados = afn.Estados.Union(afn_derecho.Estados)
+            afn.states = afn.states.Union(afn_left.states)
+            afn.states = afn.states.Union(afn_right.states)
 
-            #unir simbolos del afn actual con el afn de los hijos
-            afn.Simbolos = afn.Simbolos.Union(afn_izquierdo.Simbolos)
-            afn.Simbolos = afn.Simbolos.Union(afn_derecho.Simbolos)
+            afn.symbols = afn.symbols.Union(afn_left.symbols)
+            afn.symbols = afn.symbols.Union(afn_right.symbols)
 
-            #unir transiciones del afn actual con el afn de los hijos
-            afn.transiciones = afn.transiciones + afn_izquierdo.transiciones + afn_derecho.transiciones
+            afn.transitions = afn.transitions + afn_left.transitions + afn_right.transitions
                         
             return afn
 
+        if nodo.symbol == '.':       
+            afn = Afn()
 
-        if nodo.simbolo == '.':       
-            #crear un afn
-            afn = AFN()
-
-            #agregar estado inicial del afn
-            afn.estado_inicial = Estado(self.contador, 'normal')
-            afn.agregar_estado(afn.estado_inicial)
+            afn.initialState = State(self.counter, 'normal')
+            afn.addState(afn.initialState)
             
-            #afn del hijo izquierdo
-            afn_izquierdo = self.Thompson(nodo.hijo_izq)
+            afn_left = self.Thompson(nodo.left_child)
 
-            #afn del hijo derecho
-            afn_derecho = self.Thompson(nodo.hijo_der)
+            afn_right = self.Thompson(nodo.right_child)
 
-            #estado final afn
-            afn.setEstadoFinal(afn_derecho.EstadosFinales.Elementos[-1])
+            afn.setSingleFinalState(afn_right.finalStates.elements[-1])
 
-            #unir estados del afn actial con el afn de los hijos
-            afn.Estados = afn.Estados.Union(afn_izquierdo.Estados)
-            afn.Estados = afn.Estados.Union(afn_derecho.Estados)
+            afn.states = afn.states.Union(afn_left.states)
+            afn.states = afn.states.Union(afn_right.states)
 
-            #unir simbolos del afn actual con el afn de los hijos
-            afn.Simbolos = afn.Simbolos.Union(afn_izquierdo.Simbolos)
-            afn.Simbolos = afn.Simbolos.Union(afn_derecho.Simbolos)
+            afn.symbols = afn.symbols.Union(afn_left.symbols)
+            afn.symbols = afn.symbols.Union(afn_right.symbols)
 
-            #unir transiciones del afn actual con el afn de los hijos
-            afn.transiciones = afn.transiciones + afn_izquierdo.transiciones + afn_derecho.transiciones
+            afn.transitions = afn.transitions + afn_left.transitions + afn_right.transitions
             
-                        
-
             return afn
         
-        if nodo.simbolo == '?':
+        if nodo.symbol == '?':
 
-            #crear un afn
-            afn = AFN()
+            afn = Afn()
 
-            #agregar estado inicial del afn
-            afn.estado_inicial = Estado(self.contador, 'normal')
-            afn.agregar_estado(afn.estado_inicial)
-            self.contador += 1
+            afn.initialState = State(self.counter, 'normal')
+            afn.addState(afn.initialState)
+            self.counter += 1
 
-            #afn del hijo izquierdo
-            afn_izquierdo = self.Thompson(nodo.hijo_izq)
-            afn.agregar_transicion(afn.estado_inicial, afn_izquierdo.estado_inicial, 'ε')
+            afn_left = self.Thompson(nodo.left_child)
+            afn.addTransition(afn.initialState, afn_left.initialState, 'ε')
 
-            #agregar estado intermedio 1
-            estado_intermedio1 = Estado(self.contador +1, 'normal')
-            afn.agregar_estado(estado_intermedio1)
-            self.contador += 1
+            intermediate_state1 = State(self.counter +1, 'normal')
+            afn.addState(intermediate_state1)
+            self.counter += 1
 
-            #transicion entre estado inicial y estado intermedio
-            afn.agregar_transicion(afn.estado_inicial, estado_intermedio1, 'ε')
+            afn.addTransition(afn.initialState, intermediate_state1, 'ε')
 
-            #agregar estado intermedio 2
-            estado_intermedio2 = Estado(self.contador +1, 'normal')
-            afn.agregar_estado(estado_intermedio2)
-            self.contador += 1
+            intermediateState2 = State(self.counter +1, 'normal')
+            afn.addState(intermediateState2)
+            self.counter += 1
 
-            #transicion entre estado intermedio 1 y estado intermedio 2
-            afn.agregar_transicion(estado_intermedio1, estado_intermedio2, 'ε')
+            afn.addTransition(intermediate_state1, intermediateState2, 'ε')
             
-            #agregar estado final de ?
-            estado_final = Estado(self.contador + 1, 'normal')
-            afn.setEstadoFinal(estado_final)
-            afn.agregar_estado(estado_final)
-            self.contador += 1
+            finalStates = State(self.counter + 1, 'normal')
+            afn.setSingleFinalState(finalStates)
+            afn.addState(finalStates)
+            self.counter += 1
 
-            #agregar transiciones de los hijos
-            afn.agregar_transicion(afn_izquierdo.EstadosFinales.Elementos[-1], estado_final, 'ε')
-            afn.agregar_transicion(estado_intermedio2, estado_final, 'ε')
+            afn.addTransition(afn_left.finalStates.elements[-1], finalStates, 'ε')
+            afn.addTransition(intermediateState2, finalStates, 'ε')
 
-            #agregar el nuevo estado final al hijo izquierdo
-            afn_izquierdo.setEstadoFinal(estado_final)
+            afn_left.setSingleFinalState(finalStates)
 
-            #agregar simbolo del afn
-            afn.agregar_simbolo('ε')
+            afn.addSymbol('ε')
 
-            #unir estados del afn actial con el afn de los hijos
-            afn.Estados = afn.Estados.Union(afn_izquierdo.Estados)
-
-            #unir simbolos del afn actual con el afn de los hijos
-            afn.Simbolos = afn.Simbolos.Union(afn_izquierdo.Simbolos)
-
-            #unir transiciones del afn actual con el afn de los hijos
-            afn.transiciones = afn.transiciones + afn_izquierdo.transiciones
-
-            #estado final 
-            afn.setEstadoFinal(afn_izquierdo.EstadosFinales.Elementos[-1])
+            afn.states = afn.states.Union(afn_left.states)
+            afn.symbols = afn.symbols.Union(afn_left.symbols)
+            afn.transitions = afn.transitions + afn_left.transitions
+            afn.setSingleFinalState(afn_left.finalStates.elements[-1])
                         
             return afn
 
-        if nodo.simbolo == '*':
+        if nodo.symbol == '*':
 
-            #crear un afn
-            afn = AFN()
+            afn = Afn()
 
-            #agregar estado inicial del afn
-            afn.estado_inicial = Estado(self.contador, 'normal')
-            afn.agregar_estado(afn.estado_inicial)
-            self.contador += 1
+            afn.initialState = State(self.counter, 'normal')
+            afn.addState(afn.initialState)
+            self.counter += 1
 
-            #afn del hijo izquierdo
-            afn_izquierdo = self.Thompson(nodo.hijo_izq)
-            afn.agregar_transicion(afn.estado_inicial, afn_izquierdo.estado_inicial, 'ε')
+            afn_left = self.Thompson(nodo.left_child)
+            afn.addTransition(afn.initialState, afn_left.initialState, 'ε')
 
+            finalStates = State(self.counter + 1, 'normal')
+            afn.setSingleFinalState(finalStates)
+            afn.addState(finalStates)
+            self.counter += 1
 
-            #agregar estado final
-            estado_final = Estado(self.contador + 1, 'normal')
-            afn.setEstadoFinal(estado_final)
-            afn.agregar_estado(estado_final)
-            self.contador += 1
+            afn.addTransition(afn_left.finalStates.elements[-1], finalStates, 'ε')
+            afn.addTransition(afn_left.finalStates.elements[-1], afn_left.initialState, 'ε')
+            afn.addTransition(afn.initialState, finalStates, 'ε')
 
-            #agregar transiciones de los hijos
-            afn.agregar_transicion(afn_izquierdo.EstadosFinales.Elementos[-1], estado_final, 'ε')
-            afn.agregar_transicion(afn_izquierdo.EstadosFinales.Elementos[-1], afn_izquierdo.estado_inicial, 'ε')
-            afn.agregar_transicion(afn.estado_inicial, estado_final, 'ε')
+            afn.addSymbol('ε')
 
-            #agregar simbolo del afn
-            afn.agregar_simbolo('ε')
-
-            #unir estados del afn actial con el afn de los hijos
-            afn.Estados = afn.Estados.Union(afn_izquierdo.Estados)
-
-            #unir simbolos del afn actual con el afn de los hijos
-            afn.Simbolos = afn.Simbolos.Union(afn_izquierdo.Simbolos)
-
-            #unir transiciones del afn actual con el afn de los hijos
-            afn.transiciones = afn.transiciones + afn_izquierdo.transiciones
+            afn.states = afn.states.Union(afn_left.states)
+            afn.symbols = afn.symbols.Union(afn_left.symbols)
+            afn.transitions = afn.transitions + afn_left.transitions
            
             return afn
 
+        if nodo.symbol == '+':
 
-        if nodo.simbolo == '+':
+            afn = Afn()
 
-            #crear un afn
-            afn = AFN()
+            afn.initialState = State(self.counter, 'normal')
+            afn.addState(afn.initialState)
 
-            #estado inicial
-            afn.estado_inicial = Estado(self.contador, 'normal')
-            afn.agregar_estado(afn.estado_inicial)
+            intermediateState = State(self.counter +1, 'normal')
+            afn.addState(intermediateState)
+            self.counter += 2
 
-            #estado intermedio
-            estado_intermedio = Estado(self.contador +1, 'normal')
-            afn.agregar_estado(estado_intermedio)
-            self.contador += 2
+            afn.addTransition(afn.initialState, intermediateState, nodo.left_child.simbolo)
 
-            #transicion entre estado inicial y estado intermedio
-            afn.agregar_transicion(afn.estado_inicial, estado_intermedio, nodo.hijo_izq.simbolo)
+            afn.addSymbol(nodo.left_child.simbolo)
 
-            #agregar simbolo del afn
-            afn.agregar_simbolo(nodo.hijo_izq.simbolo)
+            afn_left = self.Thompson(nodo.left_child)
+            afn.addTransition(intermediateState, afn_left.initialState , 'ε')
 
-            #afn del hijo izquierdo
-            afn_izquierdo = self.Thompson(nodo.hijo_izq)
-            afn.agregar_transicion(estado_intermedio, afn_izquierdo.estado_inicial , 'ε')
+            finalStates = State(self.counter + 1, 'normal')
+            afn.setSingleFinalState(finalStates)
+            afn.addState(finalStates)
+            self.counter += 1
 
+            afn.addTransition(afn_left.finalStates.elements[-1], finalStates, 'ε')
+            afn.addTransition(afn_left.finalStates.elements[-1], afn_left.initialState, 'ε')
+            afn.addTransition(intermediateState, finalStates, 'ε')
 
-            #agregar estado final
-            estado_final = Estado(self.contador + 1, 'normal')
-            afn.setEstadoFinal(estado_final)
-            afn.agregar_estado(estado_final)
-            self.contador += 1
-
-            #agregar transiciones de los hijos
-            afn.agregar_transicion(afn_izquierdo.EstadosFinales.Elementos[-1], estado_final, 'ε')
-            afn.agregar_transicion(afn_izquierdo.EstadosFinales.Elementos[-1], afn_izquierdo.estado_inicial, 'ε')
-            afn.agregar_transicion(estado_intermedio, estado_final, 'ε')
-
-            #agregar simbolo del afn
-            afn.agregar_simbolo('ε')
-
-            #unir estados del afn actial con el afn de los hijos
-            afn.Estados = afn.Estados.Union(afn_izquierdo.Estados)
-
-            #unir simbolos del afn actual con el afn de los hijos
-            afn.Simbolos = afn.Simbolos.Union(afn_izquierdo.Simbolos)
-
-            #unir transiciones del afn actual con el afn de los hijos
-            afn.transiciones = afn.transiciones + afn_izquierdo.transiciones
+            afn.addSymbol('ε')
+            afn.states = afn.states.Union(afn_left.states)
+            afn.symbols = afn.symbols.Union(afn_left.symbols)
+            afn.transitions = afn.transitions + afn_left.transitions
 
             return afn
          
+    def toGraph(self,afn, name):
 
-    def cerradura_ε(self, conjunto_estados):
-        conjunto_resultado = conjunto_estados
-        for estado in conjunto_estados.Elementos:
-            for transicion in self.transiciones:
-                if transicion.estado_origen == estado and transicion.el_simbolo == 'ε':
-                    conjunto_resultado = conjunto_resultado.Union(transicion.estado_destino.EstadosAFN)
-        return conjunto_resultado
-
-    def mover(self, conjunto_estados, simbolo):
-        conjunto_resultado = Estado()
-        for estado in conjunto_estados.Elementos:
-            for transicion in self.transiciones:
-                if transicion.estado_origen == estado and transicion.el_simbolo == simbolo:
-                    conjunto_resultado = conjunto_resultado.Union(transicion.estado_destino.EstadosAFN)
-        return conjunto_resultado
-
-    def evaluar_cadena(self, cadena):
-        conjunto_estados = self.cerradura_ε(self.estado_inicial.EstadosAFN)
-        for simbolo in cadena:
-            conjunto_estados = self.mover(conjunto_estados, simbolo)
-            conjunto_estados = self.cerradura_ε(conjunto_estados)
-        for estado in conjunto_estados.Elementos:
-            if estado in self.EstadosFinales.Elementos:
-                return True
-        return False    
-
-
-    def graficar(self,afn, nombre_archivo):
-
-        g = Digraph('AFN', filename=nombre_archivo)
+        g = Digraph('AFN', filename=name)
         g.attr(rankdir='LR')
 
-        # Agregar los estados al grafo
-        for estado in afn.Estados.Elementos:
-            if estado.tipo == 'inicial':
-                g.node(str(estado.id), shape='circle')
+        for state in afn.states.elements:
+            if state.type == 'inicial':
+                g.node(str(state.id), shape='circle')
                 g.node ('', shape='none', height='0', width='0')
-                g.edge('', str(estado.id))
+                g.edge('', str(state.id))
 
-            elif estado.tipo == 'final':
-                g.node(str(estado.id), shape='doublecircle')
+            elif state.type == 'final':
+                g.node(str(state.id), shape='doublecircle')
             else:
-                g.node(str(estado.id), shape='circle')
+                g.node(str(state.id), shape='circle')
 
-        # Agregar las transiciones al grafo
-        for transicion in afn.transiciones:
-            g.edge(str(transicion[0].id), str(transicion[1].id), label=transicion[2])
+        for transition in afn.transitions:
+            g.edge(str(transition[0].id), str(transition[1].id), label=transition[2])
 
         g.view()

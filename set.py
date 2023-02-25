@@ -1,37 +1,37 @@
 class Set:
     def __init__(self):
-        self.Elementos = []
+        self.elements = []
 
-    def Interseccion(self, A):
-        interseccion = Set()
-        for elemento in self.Elementos:
-            if elemento in A.Elementos:
-                interseccion.Elementos.append(elemento)
-        return interseccion
+    def Intersection(self, A):
+        intersection = Set()
+        for elemento in self.elements:
+            if elemento in A.elements:
+                intersection.elements.append(elemento)
+        return intersection
 
     def Union(self, A):
         union = Set()
-        union.Elementos = self.Elementos + A.Elementos
+        union.elements = self.elements + A.elements
         return union
 
-    def Diferencia(self, A):
-        diferencia = Set()
-        for elemento in self.Elementos:
-            if elemento not in A.Elementos:
-                diferencia.Elementos.append(elemento)
-        return diferencia
+    def Diference(self, A):
+        diference = Set()
+        for elemento in self.elements:
+            if elemento not in A.elements:
+                diference.elements.append(elemento)
+        return diference
 
     def AddItem(self, elemento):
-        self.Elementos.append(elemento)
+        self.elements.append(elemento)
 
-    def update(self, A):
-        for elemento in A.Elementos:
-            if elemento not in self.Elementos:
-                self.Elementos.append(elemento)
+    def Update(self, A):
+        for elemento in A.elements:
+            if elemento not in self.elements:
+                self.elements.append(elemento)
 
-    def clear(self):
-        self.Elementos = []
+    def Clear(self):
+        self.elements = []
 
     def __str__(self):
-        return str(self.Elementos)
+        return str(self.elements)
         
