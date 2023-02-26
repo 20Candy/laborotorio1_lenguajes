@@ -1,4 +1,5 @@
 from utils.set import Set
+from graphviz import Digraph
 
 class Automaton:
     def __init__(self):
@@ -44,5 +45,25 @@ class Automaton:
         print("\n==================================== Estados finales ===================================")
         for estado_final in self.finalStates.elements:
             print(estado_final)
+           
+    def toGraph(self,automaton, name):
+        g = Digraph('AFN', filename=name)
+        g.attr(rankdir='LR')
+
+        for state in automaton.states.elements:
+            if state.type == 'inicial':
+                g.node(str(state.id), shape='circle')
+                g.node ('', shape='none', height='0', width='0')
+                g.edge('', str(state.id))
+
+            elif state.type == 'final':
+                g.node(str(state.id), shape='doublecircle')
+            else:
+                g.node(str(state.id), shape='circle')
+
+        for transition in automaton.transitions:
+            g.edge(str(transition[0].id), str(transition[1].id), label=transition[2])
+
+        g.view()
 
 

@@ -1,6 +1,6 @@
 from automaton.automaton import Automaton
 from utils.state import State
-from graphviz import Digraph
+from utils.set import Set
 
 class Afn(Automaton):
     def __init__(self):
@@ -9,6 +9,11 @@ class Afn(Automaton):
 
     def BuildAfn(self, nodo):
         afn = self.Thompson(nodo)
+
+        #eliminar simbolos repetidos
+        for symbol in afn.symbols.elements:
+            if afn.symbols.elements.count(symbol) > 1:
+                afn.symbols.RemoveItem(symbol)
 
         if afn is not None:
             for state in afn.states.elements:
@@ -207,23 +212,20 @@ class Afn(Automaton):
 
             return afn
          
-    def toGraph(self,afn, name):
+    def epsilonClosure(self, state):
 
-        g = Digraph('AFN', filename=name)
-        g.attr(rankdir='LR')
+        closure = Set()
+        closure.AddItem(state)
+        for transition in self.transitions:
+            if transition[0] == state and transition[2] == 'ε':
+                closure = closure.Union(self.epsilonClosure(transition[1]))
+        return closure
+    
+    def move(self, states, symbol):
 
-        for state in afn.states.elements:
-            if state.type == 'inicial':
-                g.node(str(state.id), shape='circle')
-                g.node ('', shape='none', height='0', width='0')
-                g.edge('', str(state.id))
-
-            elif state.type == 'final':
-                g.node(str(state.id), shape='doublecircle')
-            else:
-                g.node(str(state.id), shape='circle')
-
-        for transition in afn.transitions:
-            g.edge(str(transition[0].id), str(transition[1].id), label=transition[2])
-
-        g.view()
+        move = Set()
+        for state in states.elements:
+            for transition in self.transitions:
+                if transition[0] == state and transition[2] == symbol:
+                    move.AddItem(transition[1])
+        return move
