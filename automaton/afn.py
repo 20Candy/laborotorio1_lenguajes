@@ -184,9 +184,9 @@ class Afn(Automaton):
             afn.addState(intermediateState)
             self.counter += 2
 
-            afn.addTransition(afn.initialState, intermediateState, nodo.left_child.simbolo)
+            afn.addTransition(afn.initialState, intermediateState, nodo.left_child.symbol)
 
-            afn.addSymbol(nodo.left_child.simbolo)
+            afn.addSymbol(nodo.left_child.symbol)
 
             afn_left = self.Thompson(nodo.left_child)
             afn.addTransition(intermediateState, afn_left.initialState , 'ε')
