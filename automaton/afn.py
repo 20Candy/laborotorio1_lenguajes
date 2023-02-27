@@ -10,10 +10,12 @@ class Afn(Automaton):
     def BuildAfn(self, nodo):
         afn = self.Thompson(nodo)
 
-        #eliminar simbolos repetidos
+        unique_symbols = []
         for symbol in afn.symbols.elements:
-            if afn.symbols.elements.count(symbol) > 1:
-                afn.symbols.RemoveItem(symbol)
+            if symbol not in unique_symbols:
+                unique_symbols.append(symbol)
+
+        afn.symbols.elements = unique_symbols
 
         if afn is not None:
             for state in afn.states.elements:
