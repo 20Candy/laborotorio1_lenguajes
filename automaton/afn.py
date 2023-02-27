@@ -226,6 +226,6 @@ class Afn(Automaton):
         move = Set()
         for state in states.elements:
             for transition in self.transitions:
-                if transition[0] == state and transition[2] == symbol:
+                if transition[0].id == state.id and transition[2] == symbol:
                     move.AddItem(transition[1])
         return move

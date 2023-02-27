@@ -3,4 +3,8 @@ digraph AFN {
 	A [shape=circle]
 	"" [height=0 shape=none width=0]
 	"" -> A
+	B [shape=doublecircle]
+	C [shape=doublecircle]
+	A -> B [label=a]
+	A -> C [label=b]
 }
