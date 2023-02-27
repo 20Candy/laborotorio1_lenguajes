@@ -40,8 +40,12 @@ class Afd(Automaton):
 
                 states = afn.move(currentState, symbol)
 
+                newStates = Set()
                 for state in states.elements:
-                    newStates = afn.epsilonClosure(state)
+                    newStates = newStates.Union(afn.epsilonClosure(state))
+
+                if(newStates.IsEmpty()):
+                    break
                 
                 if self.SetAlreadyExists(newStates, afd.states) is None:
 
@@ -61,15 +65,22 @@ class Afd(Automaton):
                     statesToVisit.AddItem(state.AFN_states)
                     
                     afd.addTransition(self.SetAlreadyExists(currentState, afd.states), state, symbol)
+                
+                else:
+                    afd.addTransition(self.SetAlreadyExists(currentState, afd.states), self.SetAlreadyExists(newStates, afd.states), symbol)
 
 
         return afd
     
     def SetAlreadyExists(self, newSet, states):
         for state in states.elements:
-            if state.AFN_states == newSet:
-                return state
-            
+            for element in state.AFN_states.elements:
+                if element not in newSet.elements:
+                    break
+                else:
+                    return state
+                
+           
         return None
         
     
