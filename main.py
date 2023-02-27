@@ -9,11 +9,11 @@ precedence = {'(': 1, "(": 1, '|': 2, '.': 3, '*': 4, '+': 4, '?': 4}
 
 def main():
 
-    print("======================================= Expresion Regular =======================================")
+    print("********************************************* Expresion Regular *********************************************")
     expresion = input("Ingrese la expresion regular: ")
     postfix_ = Postfix(expresion, alphabet, operators, precedence)
     
-    print("\n======================================= Expresion Postfix =======================================")
+    print("\n********************************************* Expresion Postfix *********************************************")
     postfix = postfix_.ConvertToPostfix()
     if(postfix == None):
         return
@@ -22,8 +22,12 @@ def main():
     tree = Tree(postfix)
     tree.BuildTree()
 
+    print("\n********************************************* AFN *********************************************")
+
     afn = Afn()
     afn = afn.BuildAfn(tree.node)
+
+    print("\n********************************************* AFD *********************************************")
 
     afd = Afd()
     afd.BuildAfd(afn)

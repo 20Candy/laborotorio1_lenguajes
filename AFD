@@ -1,17 +1,15 @@
 digraph AFN {
 	rankdir=LR
-	A [shape=circle]
+	A [shape=doublecircle]
 	"" [height=0 shape=none width=0]
 	"" -> A
-	B [shape=circle]
+	B [shape=doublecircle]
 	C [shape=doublecircle]
-	D [shape=circle]
-	E [shape=doublecircle]
-	A -> B [label=a]
-	B -> C [label=a]
-	B -> D [label=b]
-	D -> C [label=a]
-	D -> D [label=b]
-	C -> E [label=b]
-	E -> E [label=b]
+	D [shape=doublecircle]
+	A -> B [label=0]
+	A -> C [label=1]
+	C -> D [label=0]
+	D -> D [label=0]
+	B -> D [label=0]
+	B -> C [label=1]
 }

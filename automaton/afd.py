@@ -22,11 +22,15 @@ class Afd(Automaton):
             afd.symbols.RemoveItem('ε')
 
         counter = 0
-        final = False
         statesToVisit = Set()
         states_list = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 
         state = State(states_list[counter], 'inicial', afn.epsilonClosure(afn.initialState))
+
+        if(self.VerifyFinal(state.AFN_states)):
+            afd.addFinalState(state)
+            state.type = 'final_inicial'
+
         afd.addState(state)
         afd.initialState = state
         counter += 1
@@ -49,13 +53,9 @@ class Afd(Automaton):
                 
                 if self.SetAlreadyExists(newStates, afd.states) is None:
 
-                    for newState in newStates.elements:
-                        if newState.type == 'final':
-                            final = True
-                        
-                    if final:
+                    if self.VerifyFinal(newStates):
                         state = State(states_list[counter], 'final', newStates)
-                        final = False
+                        afd.addFinalState(state)
                     else:
                         state = State(states_list[counter], 'normal', newStates)
 
@@ -63,11 +63,13 @@ class Afd(Automaton):
                     counter += 1
 
                     statesToVisit.AddItem(state.AFN_states)
-                    
-                    afd.addTransition(self.SetAlreadyExists(currentState, afd.states), state, symbol)
+
+                    if not self.VerifyTransitionExists(self.SetAlreadyExists(currentState, afd.states), state, symbol, afd):                    
+                        afd.addTransition(self.SetAlreadyExists(currentState, afd.states), state, symbol)
                 
                 else:
-                    afd.addTransition(self.SetAlreadyExists(currentState, afd.states), self.SetAlreadyExists(newStates, afd.states), symbol)
+                    if not self.VerifyTransitionExists(self.SetAlreadyExists(currentState, afd.states), self.SetAlreadyExists(newStates, afd.states), symbol, afd):
+                        afd.addTransition(self.SetAlreadyExists(currentState, afd.states), self.SetAlreadyExists(newStates, afd.states), symbol)
 
 
         return afd
@@ -79,9 +81,21 @@ class Afd(Automaton):
                     break
                 else:
                     return state
-                
-           
         return None
+    
+    def VerifyFinal(self, states):
+        for element in states.elements:
+            if element.type == 'final':
+                return True
+        return False
+    
+    def VerifyTransitionExists(self, origin_state, destiny_state, symbol, afd):
+
+        if afd.transitions:
+            for transition in afd.transitions:
+                if transition[0] == origin_state and transition[1] == destiny_state and transition[2] == symbol:
+                    return True
+        return False
         
     
 

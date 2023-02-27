@@ -56,10 +56,16 @@ class Automaton:
                 g.node ('', shape='none', height='0', width='0')
                 g.edge('', str(state.id))
 
+            elif state.type == 'final_inicial':
+                g.node(str(state.id), shape='doublecircle')
+                g.node ('', shape='none', height='0', width='0')
+                g.edge('', str(state.id))
+
             elif state.type == 'final':
                 g.node(str(state.id), shape='doublecircle')
             else:
                 g.node(str(state.id), shape='circle')
+                
 
         for transition in automaton.transitions:
             g.edge(str(transition[0].id), str(transition[1].id), label=transition[2])
