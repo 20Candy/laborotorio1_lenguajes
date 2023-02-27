@@ -217,7 +217,7 @@ class Afn(Automaton):
         closure = Set()
         closure.AddItem(state)
         for transition in self.transitions:
-            if transition[0] == state and transition[2] == 'ε':
+            if transition[0].id == state.id and transition[2] == 'ε':
                 closure = closure.Union(self.epsilonClosure(transition[1]))
         return closure
     

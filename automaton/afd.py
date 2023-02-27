@@ -45,7 +45,7 @@ class Afd(Automaton):
                     newStates = newStates.Union(afn.epsilonClosure(state))
 
                 if(newStates.IsEmpty()):
-                    break
+                    continue
                 
                 if self.SetAlreadyExists(newStates, afd.states) is None:
 
