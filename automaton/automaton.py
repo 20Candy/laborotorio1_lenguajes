@@ -9,14 +9,6 @@ class Automaton:
         self.initialState = None
         self.transitions = []
 
-    def Transicion(self, e, s):
-        conjunto_destino = Set()
-        for transicion in self.transitions:
-            if transicion.estado_origen == e and transicion.el_simbolo == s:
-                conjunto_destino = conjunto_destino.Union(transicion.estado_destino.EstadosAFN)
-        return conjunto_destino
-
-
     def addState(self, estado):
         self.states.AddItem(estado)
 
@@ -72,4 +64,21 @@ class Automaton:
 
         g.view()
 
+    
+    def epsilonClosure(self, state):
 
+        closure = Set()
+        closure.AddItem(state)
+        for transition in self.transitions:
+            if transition[0].id == state.id and transition[2] == 'ε':
+                closure = closure.Union(self.epsilonClosure(transition[1]))
+        return closure
+    
+    def move(self, states, symbol):
+
+        move = Set()
+        for state in states.elements:
+            for transition in self.transitions:
+                if transition[0].id == state.id and transition[2] == symbol:
+                    move.AddItem(transition[1])
+        return move

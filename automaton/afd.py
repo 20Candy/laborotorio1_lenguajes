@@ -97,6 +97,12 @@ class Afd(Automaton):
                     return True
         return False
         
+
+    def getTransition(self, state, symbol):
+        for transition in self.transitions:
+            if transition[0] == state and transition[2] == symbol:
+                return transition[1]
+        return None
     
 
 

@@ -14,12 +14,11 @@ class Set:
         union.elements = self.elements + A.elements
         return union
 
-    def Diference(self, A):
+    def Difference(self, A):
         diference = Set()
         for elemento in self.elements:
-            for elemento2 in A.elements:
-                if elemento not in elemento2:
-                    diference.elements.append(elemento)
+            if elemento not in A.elements:
+                diference.elements.append(elemento)       
         return diference
 
     def AddItem(self, elemento):

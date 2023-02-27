@@ -214,20 +214,3 @@ class Afn(Automaton):
 
             return afn
          
-    def epsilonClosure(self, state):
-
-        closure = Set()
-        closure.AddItem(state)
-        for transition in self.transitions:
-            if transition[0].id == state.id and transition[2] == 'ε':
-                closure = closure.Union(self.epsilonClosure(transition[1]))
-        return closure
-    
-    def move(self, states, symbol):
-
-        move = Set()
-        for state in states.elements:
-            for transition in self.transitions:
-                if transition[0].id == state.id and transition[2] == symbol:
-                    move.AddItem(transition[1])
-        return move
