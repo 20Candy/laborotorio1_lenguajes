@@ -27,8 +27,11 @@ class Minimization:
         self.partition.AddItem(afd.states.Difference(afd.finalStates))
 
         while True:
-            new_partition = self.split(self.partition, minimized)
-            if new_partition.Difference(self.partition).IsEmpty():
+            new_partition = Set()
+            for partition in self.partition.elements:
+                partition = self.split(partition, minimized)
+                new_partition = new_partition.Union(partition)
+            if new_partition.Equals(self.partition):
                 break
             self.partition = new_partition
 
@@ -57,15 +60,13 @@ class Minimization:
         new_partition = Set()
         for state in partition.elements:
             for symbol in afd.symbols.elements:
-                states = Set()
-                for state2 in partition.elements:
-                    states = states.Union(afd.move(state2, symbol))
+                states = afd.move(state, symbol)
                 for new_partition in self.partition.elements:
-                    if states.Difference(new_partition).IsEmpty():
-                        if new_partition not in new_partition.elements:
-                            new_partition.AddItem(new_partition)
+                    if states.Equals(new_partition):
+                        new_partition.AddItem(state)
                         break
         return new_partition
+
 
         
 
