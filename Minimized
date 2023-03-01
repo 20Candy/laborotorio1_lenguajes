@@ -1,0 +1,20 @@
+digraph AFN {
+	rankdir=LR
+	A [shape=circle]
+	"" [height=0 shape=none width=0]
+	"" -> A
+	B [shape=doublecircle]
+	A -> A [label=a]
+	A -> A [label=b]
+	A -> A [label=a]
+	A -> B [label=a]
+	A -> A [label=a]
+	A -> B [label=b]
+	A -> A [label=c]
+	A -> B [label=b]
+	A -> A [label=c]
+	A -> B [label=b]
+	A -> A [label=c]
+	A -> B [label=b]
+	A -> B [label=b]
+}
