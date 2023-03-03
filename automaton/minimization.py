@@ -20,8 +20,12 @@ class Minimization:
         automata = Automaton()
         automata.symbols = afd.symbols
 
-        P = [afd.finalStates, afd.states.Difference(afd.finalStates)]
-        W = [afd.finalStates, afd.states.Difference(afd.finalStates)]
+        if (len(afd.states.Difference(afd.finalStates).elements)) != 0:
+            P = [afd.finalStates, afd.states.Difference(afd.finalStates)]
+            W = [afd.finalStates, afd.states.Difference(afd.finalStates)]
+        else:
+            P = [afd.finalStates]
+            W = [afd.finalStates]
 
         while len(W) != 0:
             A = W[0]
@@ -31,13 +35,11 @@ class Minimization:
                 X = Set()
 
                 for transition in afd.transitions:
-                    if transition[2] == symbol and transition[1] == A:
-                        set = Set()
-                        set.AddItem(transition[0])
-                        X.AddItem(set)
+                    if transition[2] == symbol and transition[1] in A.elements:
+                        X.AddItem(transition[0])
 
                 for Y in P:
-                    if len(X.Intersection(Y).elements) != 0 and len(Y.Difference(X).elements) != 0:
+                    if len(X.Intersection(Y)) != 0 and len(Y.Difference(X)) != 0:
                         P.remove(Y)
                         P.append(X.Intersection(Y))
                         P.append(Y.Difference(X))
@@ -58,11 +60,9 @@ class Minimization:
 
 
         counter = 0
-        states_list = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
-
 
         for conjunto in self.conjuntos:
-            state = State(states_list[counter], 'normal', conjunto)
+            state = State(counter, 'normal', conjunto)
             automata.addState(state)
             counter += 1
 
