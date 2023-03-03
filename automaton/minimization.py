@@ -85,7 +85,12 @@ class Minimization:
 
            
         for transicion in afd.transitions:
-            automata.addTransition(self.findState(transicion[0], automata),self.findState(transicion[1], automata),transicion[2])
+            origin = self.findState(transicion[0], automata)
+            destiny = self.findState(transicion[1], automata)
+            symbol = transicion[2]
+            if self.FindTransition(origin, destiny, symbol, automata) == None:
+                automata.addTransition(self.findState(transicion[0], automata),self.findState(transicion[1], automata),transicion[2])
+                
 
         return automata
 
@@ -94,4 +99,10 @@ class Minimization:
             for state2 in state1.AFN_states.elements:
                 if state.id == state2.id:
                     return state1
+        return None
+    
+    def FindTransition(self, origin,destiny, symbol, automata):
+        for transition in automata.transitions:
+            if transition[0].id == origin.id and transition[1].id == destiny.id and transition[2] == symbol:
+                return transition
         return None
