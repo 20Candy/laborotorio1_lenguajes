@@ -56,8 +56,7 @@ class Minimization:
 
         self.conjuntos = P
         self.conjuntos = sorted(self.conjuntos, key=len, reverse=True)
-        # self.conjuntos = sorted(self.conjuntos, key=lambda x: list(x))
-
+        self.conjuntos = sorted(self.conjuntos, key=lambda x: list(x.elements)[0].id)
 
         counter = 0
 
@@ -86,7 +85,7 @@ class Minimization:
 
            
         for transicion in afd.transitions:
-            automata.addTransition(self.findState(transition[0], automata),self.findState(transicion[1], automata),transicion[2])
+            automata.addTransition(self.findState(transicion[0], automata),self.findState(transicion[1], automata),transicion[2])
 
         return automata
 
