@@ -27,15 +27,17 @@ class Direct():
         self.checkNullable(node)
         self.checkFirstPos(node)
         self.checkLastPos(node)
+        
+        self.checkFollowPos(node)
+        print("")
 
-        self.followPos(node)
-        print("FollowPos: ", node.followPos)
 
     def numberNodes(self, node):
 
         if node.is_leaf():
             if node.symbol != 'ε':
                 node.number = self.counter
+                self.table.append(node)
                 self.counter += 1
         else:
             if (node.left_child != None):
@@ -82,8 +84,7 @@ class Direct():
             if node.symbol == 'ε':
                 node.firstpos = Set()
             else:
-                node.firstpos = Set()
-                node.firstpos.AddItem(node.number)
+                node.firstpos.AddItem(node)
 
         else:
             if node.symbol == '*':
@@ -117,8 +118,7 @@ class Direct():
             if node.symbol == 'ε':
                 node.lastpos = Set()
             else:
-                node.lastpos = Set()
-                node.lastpos.AddItem(node.number)
+                node.lastpos.AddItem(node)
         else:
             if node.symbol == '*':
                 self.checkLastPos(node.left_child)
@@ -146,32 +146,44 @@ class Direct():
 
                 node.lastpos = node.left_child.lastpos.Union(node.right_child.lastpos)
 
-    def followPos(self, node):
-        if node.is_leaf():
-            if node.symbol != 'ε':
-                self.table.append((node.number, node.symbol, Set()))
 
-        else:
-            if node.symbol == '*':
-                self.followPos(node.left_child)
+    def checkFollowPos(self,node):
+        if node.symbol == ".":
+            first_pos_right = node.right_child.firstpos
+            last_pos_left = node.left_child.lastpos
 
-            elif node.symbol == '+':
-                self.followPos(node.left_child)
+            for i in last_pos_left.elements:
+                for j in first_pos_right.elements:
+                    self.FindNode(i.number).followpos.AddItem(j)
 
-            elif node.symbol == '?':
-                self.followPos(node.left_child)
+            self.checkFollowPos(node.left_child)
+            self.checkFollowPos(node.right_child)
 
-            elif node.symbol == '.':
-                self.followPos(node.left_child)
-                self.followPos(node.right_child)
+        if node.symbol == "*":
+            first_pos = node.firstpos
+            last_pos = node.lastpos
 
-                for i in node.left_child.lastpos:
-                    for j in node.right_child.firstpos:
-                        self.table.append((i, node.symbol, Set(j)))
+            for i in last_pos.elements:
+                for j in first_pos.elements:
+                    self.FindNode(i.number).followpos.AddItem(j)
 
-            elif node.symbol == '|':
-                self.followPos(node.left_child)
-                self.followPos(node.right_child)
-           
-                        
+            self.checkFollowPos(node.left_child)
+        
+        if node.symbol == "+":
+            self.checkFollowPos(node.left_child)
+
+        if node.symbol == "?":
+            self.checkFollowPos(node.left_child)
+
+        if node.symbol == "|":
+            self.checkFollowPos(node.left_child)
+            self.checkFollowPos(node.right_child)
+
+
+    def FindNode(self, number):
+        for i in self.table:
+            if i.number == number:
+                return i
+
+
 
