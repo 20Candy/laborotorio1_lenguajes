@@ -21,33 +21,27 @@ def main():
         return
     print(postfix)
 
-    tree = Tree(postfix)
-    tree.BuildTree()
+    # tree = Tree(postfix)
+    # tree.BuildTree()
 
-    print("\n********************************************* AFN *********************************************")
+    # print("\n********************************************* AFN *********************************************")
 
-    afn = Afn()
-    afn = afn.BuildAfn(tree.node)
+    # afn = Afn()
+    # afn = afn.BuildAfn(tree.node)
 
-    print("\n********************************************* AFD *********************************************")
+    # print("\n********************************************* AFD *********************************************")
 
-    afd = Afd()
-    afd = afd.BuildAfd(afn)
+    # afd = Afd()
+    # afd = afd.BuildAfd(afn)
 
-    print("\n********************************************* Minimizacion *********************************************")
+    # print("\n********************************************* Minimizacion *********************************************")
 
-    minimization = Minimization()
-    minimization.Minimize(afd)
+    # minimization = Minimization()
+    # minimization.Minimize(afd)
 
     print("\n********************************************* Directo *********************************************")
-    expresion = expresion + "#"
-    postfix = Postfix(expresion, alphabet, operators, precedence)
-    postfix = postfix.ConvertToPostfix()
-    tree = Tree(postfix)
-    tree.BuildTree()
-
     direct = Direct()
-    direct.Direct(tree.node)
+    direct.Direct(postfix)
 
     
 
