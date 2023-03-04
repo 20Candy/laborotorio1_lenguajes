@@ -3,6 +3,7 @@ from tree.tree import Tree
 from automaton.afn import Afn
 from automaton.afd import Afd
 from automaton.minimization import Minimization
+from automaton.direct import Direct
 
 alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'ε', 'E', 'ϵ']
 operators = ['|', '*', '+', '?', '(', ')', '.']
@@ -12,10 +13,10 @@ def main():
 
     print("********************************************* Expresion Regular *********************************************")
     expresion = input("Ingrese la expresion regular: ")
-    postfix_ = Postfix(expresion, alphabet, operators, precedence)
+    postfix = Postfix(expresion, alphabet, operators, precedence)
     
     print("\n********************************************* Expresion Postfix *********************************************")
-    postfix = postfix_.ConvertToPostfix()
+    postfix = postfix.ConvertToPostfix()
     if(postfix == None):
         return
     print(postfix)
@@ -37,6 +38,18 @@ def main():
 
     minimization = Minimization()
     minimization.Minimize(afd)
+
+    print("\n********************************************* Directo *********************************************")
+    expresion = expresion + "#"
+    postfix = Postfix(expresion, alphabet, operators, precedence)
+    postfix = postfix.ConvertToPostfix()
+    tree = Tree(postfix)
+    tree.BuildTree()
+
+    direct = Direct()
+    direct.Direct(tree.node)
+
+    
 
 if __name__ == "__main__":
     main()
