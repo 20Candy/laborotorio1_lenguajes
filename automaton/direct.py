@@ -58,6 +58,10 @@ class Direct():
                     else:
                         self.automata.addTransition(state, alreadyExists, symbol)
 
+        final_state = self.automata.states.elements[-1]
+        self.automata.states.elements[-1].type = 'final'
+        self.automata.finalStates.AddItem(final_state)
+
         return self.automata
                     
 
