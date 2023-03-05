@@ -1,12 +1,14 @@
 from automaton.automaton import Automaton
 from tree.tree import Tree
 from utils.set import Set
+from utils.state import State
 
 
 class Direct():
     def __init__(self):
         self.counter = 1
         self.table = []
+        self.automata = Automaton()
 
     def Direct(self, postfix_expression):
 
@@ -15,21 +17,55 @@ class Direct():
         tree.BuildTree("arbol_direct")
                
         direct = self.directAfd(tree.node)
-        # direct.toString()
-        # direct.toGraph(direct, "Direct")
+        direct.toString()
+        direct.toGraph(direct, "Direct")
 
         return direct
     
     def directAfd(self, node):
-        automata = Automaton()
-
         self.numberNodes(node)
         self.checkNullable(node)
         self.checkFirstPos(node)
         self.checkLastPos(node)
-        
         self.checkFollowPos(node)
-        print("")
+
+        self.addSymbols(node)
+
+        counter = 0
+
+        self.automata.initialState = State(counter, 'inicial', self.table[0].followpos)
+        self.automata.states.AddItem(self.automata.initialState)
+        counter += 1
+
+        for state in self.automata.states.elements:
+            for symbol in self.automata.symbols.elements:
+                union = Set()
+                for element in state.AFN_states.elements:
+                    if symbol == element.symbol:
+                        union = union.Union(element.followpos)
+
+                if not union.IsEmpty():
+                    alreadyExists = self.stateAlreadyExists(union)
+
+                    if alreadyExists is None:
+                        new_state = State(counter, 'normal', union)
+                        self.automata.states.AddItem(new_state)
+                        union = Set()
+                        counter += 1    
+
+                        self.automata.addTransition(state, new_state, symbol)
+
+                    else:
+                        self.automata.addTransition(state, alreadyExists, symbol)
+
+        return self.automata
+                    
+
+    def stateAlreadyExists(self, state):
+        for element in self.automata.states.elements:
+            if element.AFN_states.elements == state.elements:
+                return element
+        return None       
 
 
     def numberNodes(self, node):
@@ -184,6 +220,17 @@ class Direct():
         for i in self.table:
             if i.number == number:
                 return i
+            
+    def addSymbols(self, node):
+        if node.is_leaf():
+            if node.symbol != 'ε' and node.symbol != '#':
+                if node.symbol not in self.automata.symbols.elements:
+                    self.automata.symbols.AddItem(node.symbol)
+        else:
+            if (node.left_child != None):
+                self.addSymbols(node.left_child)
+            if (node.right_child != None):
+                self.addSymbols(node.right_child)
 
 
 
