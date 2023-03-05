@@ -4,14 +4,15 @@ from utils.state import State
 
 
 class Minimization:
-    def __init__(self):
+    def __init__(self, fileName = "Minimized"):
         self.conjuntos = []
+        self.fileName = fileName
 
     def Minimize(self, afd):
         minimized = self.hopcroft(afd)
 
         minimized.toString()
-        minimized.toGraph(minimized, "Minimized")
+        minimized.toGraph(minimized, self.fileName)
 
         return minimized
     
