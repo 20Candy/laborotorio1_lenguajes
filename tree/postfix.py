@@ -41,6 +41,8 @@ class Postfix:
                 elif expression[i-1] == '+' and (token in self.alphabet or token == '('):
                     new_expr += "."
             new_expr += token
+
+        print(new_expr)
            
         return new_expr
 

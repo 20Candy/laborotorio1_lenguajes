@@ -33,8 +33,10 @@ class Direct():
 
         counter = 0
 
-        self.automata.initialState = State(counter, 'inicial', self.table[0].followpos)
-        self.automata.states.AddItem(self.automata.initialState)
+        # initstate  es firstpos del nodo raiz
+        initstate = State(counter,"inicial", node.firstpos)
+        self.automata.states.AddItem(initstate)
+        self.automata.initialState = initstate
         counter += 1
 
         for state in self.automata.states.elements:
@@ -48,7 +50,13 @@ class Direct():
                     alreadyExists = self.stateAlreadyExists(union)
 
                     if alreadyExists is None:
-                        new_state = State(counter, 'normal', union)
+
+                        if "#" in(s.symbol for s in union.elements):
+                            new_state = State(counter, 'final', union)
+                            self.automata.finalStates.AddItem(new_state)
+                        else:                     
+                            new_state = State(counter, 'normal', union)
+
                         self.automata.states.AddItem(new_state)
                         union = Set()
                         counter += 1    
@@ -57,10 +65,6 @@ class Direct():
 
                     else:
                         self.automata.addTransition(state, alreadyExists, symbol)
-
-        final_state = self.automata.states.elements[-1]
-        self.automata.states.elements[-1].type = 'final'
-        self.automata.finalStates.AddItem(final_state)
 
         return self.automata
                     
