@@ -45,6 +45,7 @@ class Direct():
                 for element in state.AFN_states.elements:
                     if symbol == element.symbol:
                         union = union.Union(element.followpos)
+                        union = self.clearDuplicates(union)
 
                 if not union.IsEmpty():
                     alreadyExists = self.stateAlreadyExists(union)
@@ -67,6 +68,13 @@ class Direct():
                         self.automata.addTransition(state, alreadyExists, symbol)
 
         return self.automata
+    
+    def clearDuplicates(self, set):
+        new_set = Set()
+        for element in set.elements:
+            if not new_set.Contains(element):
+                new_set.AddItem(element)
+        return new_set
                     
 
     def stateAlreadyExists(self, state):
@@ -198,7 +206,9 @@ class Direct():
 
             for i in last_pos_left.elements:
                 for j in first_pos_right.elements:
-                    self.FindNode(i.number).followpos.AddItem(j)
+                    find_node = self.FindNode(i.number)
+                    if(self.nodeAlreadyExists(find_node.followpos, j) == False):
+                        find_node.followpos.AddItem(j)
 
             self.checkFollowPos(node.left_child)
             self.checkFollowPos(node.right_child)
@@ -209,14 +219,10 @@ class Direct():
 
             for i in last_pos.elements:
                 for j in first_pos.elements:
-                    self.FindNode(i.number).followpos.AddItem(j)
+                    find_node = self.FindNode(i.number)
+                    if(self.nodeAlreadyExists(find_node.followpos, j) == False):
+                        find_node.followpos.AddItem(j)
 
-            self.checkFollowPos(node.left_child)
-        
-        if node.symbol == "+":
-            self.checkFollowPos(node.left_child)
-
-        if node.symbol == "?":
             self.checkFollowPos(node.left_child)
 
         if node.symbol == "|":
@@ -239,6 +245,12 @@ class Direct():
                 self.addSymbols(node.left_child)
             if (node.right_child != None):
                 self.addSymbols(node.right_child)
+
+    def nodeAlreadyExists(self, nodes, node):
+        for element in nodes.elements:
+            if element == node:
+                return True
+        return False
 
 
 

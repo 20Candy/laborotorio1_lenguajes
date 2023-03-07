@@ -40,6 +40,9 @@ class Set:
     
     def Pop(self):
         return self.elements.pop()
+    
+    def Contains(self, elemento):
+        return elemento in self.elements
 
     def __len__(self):
         return len(self.elements)

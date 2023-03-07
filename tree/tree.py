@@ -32,12 +32,21 @@ class Tree:
             node.left_child = self.stack.pop()
             self.stack.append(node)
         elif symbol == '+':
-            node = Node(symbol)
-            node.left_child = self.stack.pop()
+            symbol_to_add = self.stack[-1]
+        
+            node = Node(".")
+            node.left_child = symbol_to_add
+            node.right_child = Node("*")
+            node.right_child.left_child = self.stack.pop()
+            
             self.stack.append(node)
         elif symbol == '?':
-            node = Node(symbol)
-            node.left_child = self.stack.pop()
+            symbol_to_add = self.stack.pop()
+
+            node = Node("|")
+            node.left_child = symbol_to_add
+            node.right_child = Node("ε")
+
             self.stack.append(node)
         elif symbol == '.':
             node = Node(symbol)
