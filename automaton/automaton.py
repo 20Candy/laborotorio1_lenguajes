@@ -71,7 +71,7 @@ class Automaton:
         closure.AddItem(state)
         for transition in self.transitions:
             if transition[0].id == state.id and transition[2] == 'ε':
-                closure = closure.Union(self.epsilonClosure(transition[1]))
+                    closure = closure.Union(self.epsilonClosure(transition[1]))
         return closure
     
     def move(self, states, symbol):

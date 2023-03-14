@@ -34,7 +34,13 @@ class Direct():
         counter = 0
 
         # initstate  es firstpos del nodo raiz
-        initstate = State(counter,"inicial", node.firstpos)
+
+        if "#" in(s.symbol for s in node.firstpos.elements):
+            initstate = State(counter, 'final_inicial',  node.firstpos)
+            self.automata.finalStates.AddItem(initstate)
+        else:
+            initstate = State(counter,"inicial", node.firstpos)
+
         self.automata.states.AddItem(initstate)
         self.automata.initialState = initstate
         counter += 1

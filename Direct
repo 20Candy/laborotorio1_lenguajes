@@ -1,6 +1,6 @@
 digraph AFN {
 	rankdir=LR
-	0 [shape=circle]
+	0 [shape=doublecircle]
 	"" [height=0 shape=none width=0]
 	"" -> 0
 	1 [shape=circle]
