@@ -43,6 +43,10 @@ class Set:
     
     def Contains(self, elemento):
         return elemento in self.elements
+    
+    def RemoveDuplicates(self):
+        self.elements = list(set(self.elements))
+        
 
     def __len__(self):
         return len(self.elements)

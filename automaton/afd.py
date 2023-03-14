@@ -46,8 +46,11 @@ class Afd(Automaton):
 
                 newStates = Set()
                 for state in states.elements:
-                    newStates = newStates.Union(afn.epsilonClosure(state))
-
+                    temp = afn.epsilonClosure(state)
+                    newStates = newStates.Union(temp)
+                    
+                newStates.RemoveDuplicates()
+                
                 if(newStates.IsEmpty()):
                     continue
                 
@@ -76,11 +79,12 @@ class Afd(Automaton):
     
     def SetAlreadyExists(self, newSet, states):
         for state in states.elements:
-            for element in state.AFN_states.elements:
-                if element not in newSet.elements:
-                    break
-                else:
-                    return state
+            if len(state.AFN_states.elements) == len(newSet.elements):
+                for element in state.AFN_states.elements:
+                    if element not in newSet.elements:
+                        break
+                    else:
+                        return state
         return None
     
     def VerifyFinal(self, states):
