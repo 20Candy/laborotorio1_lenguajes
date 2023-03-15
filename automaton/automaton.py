@@ -65,14 +65,24 @@ class Automaton:
         g.view()
 
     
-    def epsilonClosure(self, state):
+    def epsilonClosure(self, estado):
+        visited = Set()
+        stack = [estado]
+        result = Set()
 
-        closure = Set()
-        closure.AddItem(state)
-        for transition in self.transitions:
-            if transition[0].id == state.id and transition[2] == 'ε':
-                    closure = closure.Union(self.epsilonClosure(transition[1]))
-        return closure
+        while stack:
+            estado = stack.pop(0)
+            if estado in visited.elements:
+                continue
+            visited.AddItem(estado)
+            result.AddItem(estado)
+
+            for transicion in self.transitions:
+                if transicion[0].id == estado.id:
+                    if (transicion[2] == 'ε' and transicion[1].id != estado.id and transicion[1] not in visited.elements):
+                        stack.append(transicion[1])
+
+        return result
     
     def move(self, states, symbol):
 
