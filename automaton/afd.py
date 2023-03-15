@@ -79,14 +79,12 @@ class Afd(Automaton):
     
     def SetAlreadyExists(self, newSet, states):
         for state in states.elements:
-            if len(state.AFN_states.elements) == len(newSet.elements):
-                for element in state.AFN_states.elements:
-                    if element not in newSet.elements:
-                        break
-                    else:
-                        return state
+            if len (state.AFN_states.elements) == len(newSet.elements):
+                if len(newSet.Difference(state.AFN_states).elements) == 0:
+                    return state
+                
         return None
-    
+
     def VerifyFinal(self, states):
         for element in states.elements:
             if element.type == 'final':
