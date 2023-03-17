@@ -85,8 +85,9 @@ class Direct():
 
     def stateAlreadyExists(self, state):
         for element in self.automata.states.elements:
-            if element.AFN_states.elements == state.elements:
-                return element
+            if len(state.elements) == len(element.AFN_states.elements):
+                if len(state.Difference(element.AFN_states).elements) == 0:
+                    return element
         return None       
 
 
