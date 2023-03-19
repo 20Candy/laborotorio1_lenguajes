@@ -7,7 +7,7 @@ class Tree:
         self.node = None
         self.stack = []
     
-    def BuildTree(self):
+    def BuildTree(self, filename="arbol"):
         for symbol in self.expression:
             if symbol == '*':
                 self.create_node(symbol)
@@ -23,7 +23,7 @@ class Tree:
                 self.create_node(symbol)
 
         self.node = self.stack.pop()
-        self.toGraph(self.node)
+        self.toGraph(self.node, filename)
 
     def create_node(self, symbol):
 
@@ -32,12 +32,21 @@ class Tree:
             node.left_child = self.stack.pop()
             self.stack.append(node)
         elif symbol == '+':
-            node = Node(symbol)
-            node.left_child = self.stack.pop()
+            symbol_to_add = self.stack[-1]
+        
+            node = Node(".")
+            node.left_child = symbol_to_add
+            node.right_child = Node("*")
+            node.right_child.left_child = self.stack.pop()
+            
             self.stack.append(node)
         elif symbol == '?':
-            node = Node(symbol)
-            node.left_child = self.stack.pop()
+            symbol_to_add = self.stack.pop()
+
+            node = Node("|")
+            node.left_child = symbol_to_add
+            node.right_child = Node("ε")
+
             self.stack.append(node)
         elif symbol == '.':
             node = Node(symbol)
@@ -53,10 +62,10 @@ class Tree:
             node = Node(symbol)
             self.stack.append(node)
 
-    def toGraph(self, node):
+    def toGraph(self, node, filename="arbol"):
         dot = Digraph(comment='Tree')
         self.GraphNode(node, dot)
-        dot.render('arbol', view=True)
+        dot.render(filename, view=True)
 
     def GraphNode(self, node, dot):
         if node is None:

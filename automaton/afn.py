@@ -1,6 +1,6 @@
 from automaton.automaton import Automaton
 from utils.state import State
-from graphviz import Digraph
+from utils.set import Set
 
 class Afn(Automaton):
     def __init__(self):
@@ -9,6 +9,13 @@ class Afn(Automaton):
 
     def BuildAfn(self, nodo):
         afn = self.Thompson(nodo)
+
+        unique_symbols = []
+        for symbol in afn.symbols.elements:
+            if symbol not in unique_symbols:
+                unique_symbols.append(symbol)
+
+        afn.symbols.elements = unique_symbols
 
         if afn is not None:
             for state in afn.states.elements:
@@ -184,9 +191,9 @@ class Afn(Automaton):
             afn.addState(intermediateState)
             self.counter += 2
 
-            afn.addTransition(afn.initialState, intermediateState, nodo.left_child.simbolo)
+            afn.addTransition(afn.initialState, intermediateState, nodo.left_child.symbol)
 
-            afn.addSymbol(nodo.left_child.simbolo)
+            afn.addSymbol(nodo.left_child.symbol)
 
             afn_left = self.Thompson(nodo.left_child)
             afn.addTransition(intermediateState, afn_left.initialState , 'ε')
@@ -207,23 +214,3 @@ class Afn(Automaton):
 
             return afn
          
-    def toGraph(self,afn, name):
-
-        g = Digraph('AFN', filename=name)
-        g.attr(rankdir='LR')
-
-        for state in afn.states.elements:
-            if state.type == 'inicial':
-                g.node(str(state.id), shape='circle')
-                g.node ('', shape='none', height='0', width='0')
-                g.edge('', str(state.id))
-
-            elif state.type == 'final':
-                g.node(str(state.id), shape='doublecircle')
-            else:
-                g.node(str(state.id), shape='circle')
-
-        for transition in afn.transitions:
-            g.edge(str(transition[0].id), str(transition[1].id), label=transition[2])
-
-        g.view()
