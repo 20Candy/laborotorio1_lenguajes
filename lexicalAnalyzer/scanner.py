@@ -7,6 +7,7 @@ class Scanner:
         self.tokens = {}
         self.rule_tokens = False
         self.final_regex = ""
+        self.alphabet = [chr(i) for i in range(256)] # ASCII
         
     def scan(self):
         #leer el archivo
@@ -68,54 +69,7 @@ class Scanner:
                 self.tokens[temporary_word] = temporary_fun
 
            
-        #cambiar [] a regex
-        for key, value in self.variables.items():
-            if value.startswith('['):
-
-                if "-" in value:
-                    value = value.replace("'", "")
-
-                    temp = ""
-                    for i, x in enumerate(value):
-                        if x == "|" or x == "." or x == "*" or x == "+" or x == "?":
-                            temp += x
-
-                        if x == "-":
-                            first = value[i-1]
-                            last = value[i+1]
-
-
-                            for j in range(ord(first), ord(last)+1):
-                                temp += str(j) + "|"
-
-                    self.variables[key] = "[" + temp[:-1] + "]"
-
-                else:
-                    tempTotal = ""
-                    temp = ""
-                    openComilla = False
-
-                    for i, x in enumerate(value):
-                        if x == "'":
-                            if temp != "":
-                                if temp == "\\t":
-                                    tempTotal += "9" + "|"
-
-                                elif temp == "\\n":
-                                    tempTotal += "10" + "|"
-
-                                else:
-                                    tempTotal += str(ord(temp)) + "|"
-                                    
-                                temp = ""
-                            openComilla = not openComilla
-                            continue
-
-                        if openComilla:
-                            temp += x
-
-                    self.variables[key] = "[" + tempTotal[:-1] + "]"
-
+        
         #agregar concatenaciones necesarias
         self.addConcatenation()
 
@@ -133,14 +87,63 @@ class Scanner:
         self.final_regex = self.final_regex[:-1]
 
 
+    def getRegex(self, value):
+
+        if "-" in value:
+            value = value.replace("'", "")
+
+            temp = ""
+            for i, x in enumerate(value):
+                if x == "|" or x == "•" or x == "*" or x == "+" or x == "?":
+                    temp += x
+
+                if x == "-":
+                    first = value[i-1]
+                    last = value[i+1]
+
+
+                    for j in range(ord(first), ord(last)+1):
+                        temp += str(j) + "|"
+
+            return ("(" + temp[:-1] + ")")
+
+        else:
+            tempTotal = ""
+            temp = ""
+            openComilla = False
+
+            for i, x in enumerate(value):
+                if x == "'":
+                    if temp != "":
+                        if temp == "\\t":
+                            tempTotal += "9" + "|"
+
+                        elif temp == "\\n":
+                            tempTotal += "10" + "|"
+
+                        else:
+                            tempTotal += str(ord(temp)) + "|"
+                            
+                        temp = ""
+                    openComilla = not openComilla
+                    continue
+
+                if openComilla:
+                    temp += x
+
+            return ("(" + tempTotal[:-1] + ")")
+
 
     def recursiveSerach(self, value):
         if(value.startswith('[')):
-            return value.replace("[", "(").replace("]", ")")
+            return self.getRegex(value)
         
         elif value in self.variables.keys():
             return self.variables[value]
-            
+        
+        if value in self.alphabet:
+            return str(ord(value))
+  
         else:
 
             if '(' in value:    
@@ -166,8 +169,8 @@ class Scanner:
             if "|" in value:
                 return(self.recursiveSerach(value.split('|')[0]) + "|" + self.recursiveSerach(value.split('|')[1]))
             
-            elif '.' in value:
-                return(self.recursiveSerach(value.split('.')[0]) + "." + self.recursiveSerach(value.split('.')[1]))
+            elif '•' in value:
+                return(self.recursiveSerach(value.split('.')[0]) + "•" + self.recursiveSerach(value.split('.')[1]))
 
             if '+' in value:
                 return(self.recursiveSerach(value.split('+')[0]) + "+")
@@ -181,6 +184,31 @@ class Scanner:
             elif '|' in value:
                 return(self.recursiveSerach(value.split('|')[0]) + "|" + self.recursiveSerach(value.split('|')[1]))
             
+            else:
+                before = ""
+                match ="" 
+                after= ""
+                temp = ""
+                keys_ordered = sorted(self.variables.keys(), key=len, reverse=True)
+
+                for key in keys_ordered:
+                    if key in value:
+                        before, match, after = value.partition(key)
+                        match = self.recursiveSerach(match)
+                        value = value.replace(key, "")     
+
+                        if before != "":
+                            before = self.recursiveSerach(before)
+                            value = value.replace(before, "") 
+
+                        if after != "":
+                            after = self.recursiveSerach(after) 
+                            value = value.replace(after, "") 
+
+                        temp = "(" + before + match + after + ")"
+          
+                return temp            
+
 
     def addConcatenation(self):
         for key, value in self.variables.items():
@@ -190,7 +218,7 @@ class Scanner:
                 expresiones = []
                 temp = ""
                 for i, x in enumerate(value):
-                    if x == "+" or x == "*" or x == "?" or x == "." or x == "|" or x == "(" or x == ")":
+                    if x == "+" or x == "*" or x == "?"  or x == "|" or x == "(" or x == ")":
                         if(temp != ""):
                             expresiones.append(temp)
                             temp = ""
@@ -206,19 +234,19 @@ class Scanner:
                 for i, token in enumerate(expresiones):
                     if i > 0:
                         if token in self.variables.keys() and expresiones[i-1] in self.variables.keys():
-                            new_expr.append(".")
+                            new_expr.append("•")
                         elif token in self.variables.keys() and expresiones[i-1] == ')':
-                            new_expr.append(".")
+                            new_expr.append("•")
                         elif token == '(' and expresiones[i-1] in self.variables.keys():
-                            new_expr.append(".")
+                            new_expr.append("•")
                         elif token == '(' and expresiones[i-1] == ')':
-                            new_expr.append(".")
+                            new_expr.append("•")
                         elif expresiones[i-1] == '?' and (token in self.variables.keys() or token == '('):
-                            new_expr.append(".")
+                            new_expr.append("•")
                         elif expresiones[i-1] == '*' and (token in self.variables.keys() or token == '('):
-                            new_expr.append(".")
+                            new_expr.append("•")
                         elif expresiones[i-1] == '+' and (token in self.variables.keys() or token == '('):
-                            new_expr.append(".")
+                            new_expr.append("•")
                     new_expr.append(token)
 
                 self.variables[key] = ''.join(new_expr)

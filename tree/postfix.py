@@ -25,19 +25,19 @@ class Postfix:
         for i, token in enumerate(expression):
             if i > 0:
                 if token in self.alphabet and expression[i-1] in self.alphabet:
-                    new_expr.append(".")
+                    new_expr.append("•")
                 elif token in self.alphabet and expression[i-1] == ')':
-                    new_expr.append(".")
+                    new_expr.append("•")
                 elif token == '(' and expression[i-1] in self.alphabet:
-                    new_expr.append(".")
+                    new_expr.append("•")
                 elif token == '(' and expression[i-1] == ')':
-                    new_expr.append(".")
+                    new_expr.append("•")
                 elif expression[i-1] == '?' and (token in self.alphabet or token == '('):
-                    new_expr.append(".")
+                    new_expr.append("•")
                 elif expression[i-1] == '*' and (token in self.alphabet or token == '('):
-                    new_expr.append(".")
+                    new_expr.append("•")
                 elif expression[i-1] == '+' and (token in self.alphabet or token == '('):
-                    new_expr.append(".")
+                    new_expr.append("•")
             new_expr.append(token)
            
         return new_expr
@@ -57,7 +57,7 @@ class Postfix:
                     raise ValueError("Parentesis vacio")
 
         for i, token in enumerate(self.expression):
-            if token in "|." and token != '(' and token != ')':
+            if token in "|•" and token != '(' and token != ')':
                 if i == 0 or i == len(self.expression)-1:
                     raise ValueError("Operador binario no puede estar al inicio o al final")
        
@@ -67,7 +67,7 @@ class Postfix:
                     raise ValueError("Operador unario debe tener un caracter o ) a la izquierda")
 
         for i, token in enumerate(self.expression):
-            if token in ".|":
+            if token in "•|":
                 if self.expression[i-1] not in self.alphabet and self.expression[i-1] != ')' and self.expression[i-1] not in "+*?":
                     raise ValueError("Operador binario debe tener un caracter o ) a la izquierda")
                 if self.expression[i+1] not in self.alphabet and self.expression[i+1] != '(' and self.expression[i+1] not in "+*?":
@@ -116,7 +116,7 @@ class Postfix:
         for i in range(len(self.expression)):
             #si es un operador
             current = self.expression[i]
-            if current == "+" or current == "*" or current == "?" or current == "." or current == "|" or current == "(" or current == ")":
+            if current == "+" or current == "*" or current == "?" or current == "•" or current == "|" or current == "(" or current == ")":
                 if(temp != ""):
                     expresiones.append(temp)
                     temp = ""

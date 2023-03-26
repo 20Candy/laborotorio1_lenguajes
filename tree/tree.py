@@ -35,7 +35,7 @@ class Tree:
         elif symbol == '+':
             symbol_to_add = self.stack[-1]
         
-            node = Node(".")
+            node = Node("•")
             node.left_child = symbol_to_add
             node.right_child = Node("*")
             node.right_child.left_child = self.stack.pop()
@@ -49,7 +49,7 @@ class Tree:
             node.right_child = Node("ε")
 
             self.stack.append(node)
-        elif symbol == '.':
+        elif symbol == '•':
             node = Node(symbol)
             node.right_child = self.stack.pop()
             node.left_child = self.stack.pop()
@@ -72,7 +72,7 @@ class Tree:
         if node is None:
             return
 
-        if(node.symbol == "|" or node.symbol == "." or node.symbol == "*" or node.symbol == "+" or node.symbol == "?"):
+        if(node.symbol == "|" or node.symbol == "•" or node.symbol == "*" or node.symbol == "+" or node.symbol == "?"):
             dot.node(str(id(node)), label=node.symbol)
         else:
             dot.node(str(id(node)), label=(chr(int(node.symbol))))
