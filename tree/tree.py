@@ -1,5 +1,6 @@
 from tree.node import Node
 from graphviz import Digraph
+import re
 
 class Tree:
     def __init__(self, expression):
@@ -71,7 +72,13 @@ class Tree:
         if node is None:
             return
 
-        dot.node(str(id(node)), label=node.symbol)
+        if(node.symbol == "|" or node.symbol == "." or node.symbol == "*" or node.symbol == "+" or node.symbol == "?"):
+            print(node.symbol)
+            dot.node(str(id(node)), label=node.symbol)
+        else:
+            print(chr(int(node.symbol)))
+            dot.node(str(id(node)), label=(chr(int(node.symbol))))
+
 
         if node.left_child is not None:
             self.GraphNode(node.left_child, dot)
@@ -79,4 +86,4 @@ class Tree:
 
         if node.right_child is not None:
             self.GraphNode(node.right_child, dot)
-            dot.edge(str(id(node)), str(id(node.right_child)))    
+            dot.edge(str(id(node)), str(id(node.right_child))) 
