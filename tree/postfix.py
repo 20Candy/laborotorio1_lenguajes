@@ -20,7 +20,6 @@ class Postfix:
 
         return expression
 
-
     def AddConcatenation(self, expression):
         new_expr = []
         for i, token in enumerate(expression):
@@ -109,7 +108,6 @@ class Postfix:
             postfix+=stack.pop()
 
         return postfix
-
 
     def findExpression(self):
         expresiones = []

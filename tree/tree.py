@@ -73,10 +73,8 @@ class Tree:
             return
 
         if(node.symbol == "|" or node.symbol == "." or node.symbol == "*" or node.symbol == "+" or node.symbol == "?"):
-            print(node.symbol)
             dot.node(str(id(node)), label=node.symbol)
         else:
-            print(chr(int(node.symbol)))
             dot.node(str(id(node)), label=(chr(int(node.symbol))))
 
 

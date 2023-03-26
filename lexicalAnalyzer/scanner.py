@@ -116,6 +116,9 @@ class Scanner:
 
                     self.variables[key] = "[" + tempTotal[:-1] + "]"
 
+        #agregar concatenaciones necesarias
+        self.addConcatenation()
+
         # reemplazo recursivo de variables
         for key, value in self.variables.items():
             self.variables[key] = self.recursiveSerach(value) 
@@ -178,4 +181,44 @@ class Scanner:
             elif '|' in value:
                 return(self.recursiveSerach(value.split('|')[0]) + "|" + self.recursiveSerach(value.split('|')[1]))
             
-        
+
+    def addConcatenation(self):
+        for key, value in self.variables.items():
+            
+            if not value.startswith('['):
+
+                expresiones = []
+                temp = ""
+                for i, x in enumerate(value):
+                    if x == "+" or x == "*" or x == "?" or x == "." or x == "|" or x == "(" or x == ")":
+                        if(temp != ""):
+                            expresiones.append(temp)
+                            temp = ""
+                        expresiones.append(x)
+
+                    else:
+                        temp += x
+
+                if(temp != ""):
+                    expresiones.append(temp)
+
+                new_expr = []
+                for i, token in enumerate(expresiones):
+                    if i > 0:
+                        if token in self.variables.keys() and expresiones[i-1] in self.variables.keys():
+                            new_expr.append(".")
+                        elif token in self.variables.keys() and expresiones[i-1] == ')':
+                            new_expr.append(".")
+                        elif token == '(' and expresiones[i-1] in self.variables.keys():
+                            new_expr.append(".")
+                        elif token == '(' and expresiones[i-1] == ')':
+                            new_expr.append(".")
+                        elif expresiones[i-1] == '?' and (token in self.variables.keys() or token == '('):
+                            new_expr.append(".")
+                        elif expresiones[i-1] == '*' and (token in self.variables.keys() or token == '('):
+                            new_expr.append(".")
+                        elif expresiones[i-1] == '+' and (token in self.variables.keys() or token == '('):
+                            new_expr.append(".")
+                    new_expr.append(token)
+
+                self.variables[key] = ''.join(new_expr)
