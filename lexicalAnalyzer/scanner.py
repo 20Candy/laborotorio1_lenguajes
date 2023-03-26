@@ -129,7 +129,6 @@ class Scanner:
 
         self.final_regex = self.final_regex[:-1]
 
-        print(self.final_regex)
 
 
     def recursiveSerach(self, value):

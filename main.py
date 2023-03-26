@@ -8,16 +8,22 @@ from automaton.simulation import Simulation
 
 from lexicalAnalyzer.scanner import Scanner
 
-alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'ε', 'E', 'ϵ']
+#alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'ε', 'E', 'ϵ']
 operators = ['|', '*', '+', '?', '(', ')', '.']
 precedence = {'(': 1, "(": 1, '|': 2, '.': 3, '*': 4, '+': 4, '?': 4}
+
+alphabet = [str(i) for i in range(256)]
 
 def main():
 
     scanner = Scanner('./yalex/slr-1.yal')
     scanner.scan()
+    postfix = Postfix(scanner.final_regex, alphabet, operators, precedence)
+    postfix = postfix.ConvertToPostfix()
 
-    
+    tree = Tree(postfix)
+    tree.BuildTree()
+
 
     # expresion = ["(a*|b*)c", "(b|b)*abb(a|b)*", "(a|ε)b(a+)c?", "(a|b)*a(a|b)(a|b)","b*ab?", "b+abc+", "ab*ab*", "0(0|1)*0", "((ε|0)1*)*", "(0|1)*0(0|1)(0|1)", "(00)*(11)*", "(0|1)1*(0|1)", "0?(1|ε)?0*", "((1?)*)*", "(01)*(10)*"]
 
