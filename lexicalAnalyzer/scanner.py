@@ -88,9 +88,11 @@ class Scanner:
 
 
     def getRegex(self, value):
+        value = value.replace("'", "")
+        value = value.replace("[", "")
+        value = value.replace("]", "")
 
         if "-" in value:
-            value = value.replace("'", "")
 
             temp = ""
             for i, x in enumerate(value):
@@ -108,30 +110,34 @@ class Scanner:
             return ("(" + temp[:-1] + ")")
 
         else:
-            tempTotal = ""
+            matches = []
             temp = ""
-            openComilla = False
-
-            for i, x in enumerate(value):
-                if x == "'":
-                    if temp != "":
-                        if temp == "\\t":
-                            tempTotal += "9" + "|"
-
-                        elif temp == "\\n":
-                            tempTotal += "10" + "|"
-
-                        else:
-                            tempTotal += str(ord(temp)) + "|"
-                            
-                        temp = ""
-                    openComilla = not openComilla
+            final = ""
+            i = 0
+            while i < len(value):
+                if value[i] == "'" or value[i] == '"':
+                    i += 1
                     continue
 
-                if openComilla:
-                    temp += x
+                temp += value[i]
+                if temp in self.alphabet:
+                    i += 1
 
-            return ("(" + tempTotal[:-1] + ")")
+                elif temp == "\\n" or temp == "\\t" or temp == "\\s":
+                    matches.append(temp)
+                    temp = ""
+                    i += 1
+
+                else:
+                    temp = temp[:-1]
+                    matches.append(temp)
+                    temp = ""
+
+
+            for match in matches:
+                final += str(Simbolo(match)) + "|"
+
+            return ("(" + final[:-1] + ")")
 
 
     def recursiveSerach(self, value):
@@ -157,11 +163,7 @@ class Scanner:
                 # si hay algo despues de los parentesis
                 if value.split(')')[1]:
 
-                    if(value.split(')')[1].startswith('|')  or value.split(')')[1].startswith('.')):
-                        temp = temp + self.recursiveSerach(value.split(')')[1][:-1]) + value.split(')')[1][-1]
-
-                    else:
-                        temp = temp + value.split(')')[1] 
+                    temp = temp + self.recursiveSerach(value.split(')')[1][:-1]) + value.split(')')[1][-1]
 
                 return temp
                    
