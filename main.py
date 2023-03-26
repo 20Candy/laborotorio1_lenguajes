@@ -16,8 +16,6 @@ def main():
 
     scanner = Scanner('./yalex/slr-1.yal')
     scanner.scan()
-    print(scanner)
-
 
     
 

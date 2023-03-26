@@ -1,4 +1,7 @@
 class Simbolo:
-    def __init__(self, id, c_id):
-        self.id = id     #id = ASCII de c_id;
+    def __init__(self, c_id):
+        self.id = ord(c_id)
         self.c_id = c_id
+
+    def __str__(self):
+        return str(self.id)
