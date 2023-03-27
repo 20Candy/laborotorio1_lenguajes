@@ -8,7 +8,7 @@ class Scanner:
         self.rule_tokens = False
         self.final_regex = ""
         self.alphabet = [chr(i) for i in range(256)] # ASCII
-        self.NumAlphabet = [str(i) for i in range(256)] # ASCII
+        self.NumAlphabet = [str(i) for i in range(256)] # ASCII pero en string
         self.operadores = ["|", "*", "+", "?", "(", ")", "•"]
         
     def scan(self):
@@ -70,7 +70,7 @@ class Scanner:
 
                 self.tokens[temporary_word] = temporary_fun
 
-        #convertir a regex
+        #convertir a regex las expresiones entre []
         self.convertRegex()
         
         #agregar concatenaciones necesarias
@@ -89,6 +89,8 @@ class Scanner:
 
         self.final_regex = self.final_regex[:-1]
 
+
+    #reemplazo de [] con el regex correspondiente==============================================
     def convertRegex(self):
         for key, value in self.variables.items():
             if "[" in value:
@@ -185,6 +187,8 @@ class Scanner:
                     else:
                         self.variables[key] = before +  "|".join(tempFinal) +after
 
+
+    # busqueda recursiva de variables ==========================================================
     def recursiveSerach(self, value):
 
         if(value.startswith('[')) and (value.endswith(']')):
@@ -286,8 +290,7 @@ class Scanner:
                 if "'" in value:
                     return (self.recursiveSerach(value.replace("'", "")))
 
-
-
+    # agregar concatenacion =====================================================================
     def addConcatenation(self):
         for key, value in self.variables.items():
             # value = value.replace("'", "")
