@@ -20,6 +20,8 @@ def main():
     postfix = Postfix(scanner.final_regex, alphabet, operators, precedence)
     postfix = postfix.ConvertToPostfix()
 
+    print(postfix)
+
     tree = Tree(postfix)
     tree.BuildTree()
 

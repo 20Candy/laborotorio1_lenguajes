@@ -8,6 +8,8 @@ class Scanner:
         self.rule_tokens = False
         self.final_regex = ""
         self.alphabet = [chr(i) for i in range(256)] # ASCII
+        self.NumAlphabet = [str(i) for i in range(256)] # ASCII
+        self.operadores = ["|", "*", "+", "?", "(", ")", "•"]
         
     def scan(self):
         #leer el archivo
@@ -68,7 +70,8 @@ class Scanner:
 
                 self.tokens[temporary_word] = temporary_fun
 
-           
+        #convertir a regex
+        self.convertRegex()
         
         #agregar concatenaciones necesarias
         self.addConcatenation()
@@ -86,141 +89,215 @@ class Scanner:
 
         self.final_regex = self.final_regex[:-1]
 
+    def convertRegex(self):
+        for key, value in self.variables.items():
+            if "[" in value:
+                #obtener el valor dentro de los corchetes
+                first = value.find('[')
+                last = value.find(']')
+                inside = value[first+1:last]
+                before = value[:first+1]
+                after = value[last:]
 
-    def getRegex(self, value):
-        value = value.replace("'", "")
-        value = value.replace("[", "")
-        value = value.replace("]", "")
+                if inside.startswith ('"') and inside.endswith ('"'):
+                    
+                    #obtner lo que esta antes de las comillas
+                    first1 = inside.find('"')
+                    last1 = inside.rfind('"')
+                    inside1 = inside[first1+1:last1]
 
-        if "-" in value:
-
-            temp = ""
-            for i, x in enumerate(value):
-                if x == "|" or x == "•" or x == "*" or x == "+" or x == "?":
-                    temp += x
-
-                if x == "-":
-                    first = value[i-1]
-                    last = value[i+1]
-
-
-                    for j in range(ord(first), ord(last)+1):
-                        temp += str(j) + "|"
-
-            return ("(" + temp[:-1] + ")")
-
-        else:
-            matches = []
-            temp = ""
-            final = ""
-            i = 0
-            while i < len(value):
-                if value[i] == "'" or value[i] == '"':
-                    i += 1
-                    continue
-
-                temp += value[i]
-                if temp in self.alphabet:
-                    i += 1
-
-                elif temp == "\\n" or temp == "\\t" or temp == "\\s":
-                    matches.append(temp)
                     temp = ""
-                    i += 1
+                    tempFinal = ""
+                    contador = 0
+                    while contador < len(inside1):
+                        temp += inside1[contador]
 
+                        if temp =="\\":
+                            #si el siguiente caracter es s
+                            if inside1[contador+1] == "s":
+                                tempFinal += str(ord(" ")) + "|"
+                                temp = ""
+                                contador += 2
+
+                            #si el siguiente caracter es t
+                            elif inside1[contador+1] == "t":
+                                tempFinal += str(ord("\t")) + "|"
+                                temp = ""
+                                contador += 2
+
+                            #si el siguiente caracter es n
+                            elif inside1[contador+1] == "n":
+                                tempFinal += str(ord("\n")) + "|"
+                                temp = ""
+                                contador += 2
+
+                        else:
+
+                            if temp in self.alphabet:
+                                continue
+                            else:
+                                tempFinal += temp[:-1] + "|"
+                                temp = ""
+                                contador += 1
+
+                    
+                    self.variables[key] = before + tempFinal[:-1] + after
+                    
                 else:
-                    temp = temp[:-1]
-                    matches.append(temp)
-                    temp = ""
 
+                    #convertir todos los '' en numeros 
+                    open = False
+                    enComillas = ""
+                    tempFinal = []
+                    for i, x in enumerate(inside):
+                        if x == "'":
+                            if open:
+                                if enComillas == "\\s":
+                                    tempFinal.append(str(ord(" ")))
+                                    enComillas = ""
+                                elif enComillas == "\\t":
+                                    tempFinal.append(str(ord("\t")))
+                                    enComillas = ""
+                                elif enComillas == "\\n":
+                                    tempFinal.append(str(ord("\n")))
+                                    enComillas = ""
+                                else:
+                                    tempFinal.append(str(ord(enComillas)))
+                                    enComillas = ""
 
-            for match in matches:
-                final += str(Simbolo(match)) + "|"
+                            open = not open
 
-            return ("(" + final[:-1] + ")")
+                        else:
+                            if not open:
+                                tempFinal.append(x)
+                            else:
+                                enComillas+= x
 
+                    if "-" in tempFinal:
+                        rango = ""
+                        for i, x in enumerate(tempFinal):
+                            if x == "-":
+                                for j in range(int(tempFinal[i-1]), int(tempFinal[i+1])+1):
+                                    rango += str(j) + "|"
+
+                        self.variables[key] = before+ rango[:-1] + after
+
+                    else:
+                        self.variables[key] = before +  "|".join(tempFinal) +after
 
     def recursiveSerach(self, value):
-        if(value.startswith('[')):
-            return self.getRegex(value)
+
+        if(value.startswith('[')) and (value.endswith(']')):
+            return value.replace('[','(').replace(']',')')
         
-        elif value in self.variables.keys():
+        if value in self.variables.keys():
             return self.variables[value]
+        
+        if value in self.operadores:
+            return value
         
         if value in self.alphabet:
             return str(ord(value))
-  
+        
+        if value in self.NumAlphabet:
+            return value
+        
         else:
 
             if '(' in value:    
-                #enviar lo que este entre () a la funcion recursiva
-                temp = ("(" + self.recursiveSerach(value.split('(')[1].split(')')[0]) + ")")
 
-                # si hay algo antes de los parentesis
-                if value.split('(')[0]:
-                    temp = self.recursiveSerach(value.split('(')[0][:-1]) + value.split('(')[0][-1] + temp
+                #encontrar el primer parentesis
+                first = value.find('(')
+                #encontrar el siguiente parentesis
+                last = value.find(')')
+
+                #obtener el valor dentro de los parentesis
+                inside = value[first+1:last]
+                inside = self.recursiveSerach(inside)
+
+                #obtner lo que esta antes de los parentesis
+                before = value[:first]
+                before = self.recursiveSerach(before)
+
+                #obtener lo que esta despues de los parentesis
+                after = value[last+1:]
+                after = self.recursiveSerach(after)
                 
-                # si hay algo despues de los parentesis
-                if value.split(')')[1]:
+                return before + "(" + inside + ")" + after
+            
+            if '[' in value:    
 
-                    temp = temp + self.recursiveSerach(value.split(')')[1][:-1]) + value.split(')')[1][-1]
+                #encontrar el primer parentesis
+                first = value.find('[')
+                #encontrar el siguiente parentesis
+                last = value.find(']')
 
-                return temp
-                   
+                #obtener el valor dentro de los parentesis
+                inside = value[first+1:last]
 
-            if "|" in value:
-                return(self.recursiveSerach(value.split('|')[0]) + "|" + self.recursiveSerach(value.split('|')[1]))
+                #obtner lo que esta antes de los parentesis
+                before = value[:first]
+                before = self.recursiveSerach(before)
+
+                #obtener lo que esta despues de los parentesis
+                after = value[last+1:]
+                after = self.recursiveSerach(after)
+                
+                return before + "(" + inside + ")" + after
+
+
+            elif "|" in value:
+                first = value.find('|')
+
+                left = value[:first]
+                left = self.recursiveSerach(left)
+
+                right = value[first+1:]
+                right = self.recursiveSerach(right)
+
+                return left + "|" + right
+            
             
             elif '•' in value:
-                return(self.recursiveSerach(value.split('.')[0]) + "•" + self.recursiveSerach(value.split('.')[1]))
+                first = value.find('•')
 
+                left = value[:first]
+                left = self.recursiveSerach(left)
+
+                right = value[first+1:]
+                right = self.recursiveSerach(right)
+
+                return left + "•" + right
+            
             if '+' in value:
                 return(self.recursiveSerach(value.split('+')[0]) + "+")
             
-            elif '*' in value:
-                return(self.recursiveSerach(value.split('*')[0]) + "*")
-            
             elif '?' in value:
                 return(self.recursiveSerach(value.split('?')[0]) + "?")
-            
-            elif '|' in value:
-                return(self.recursiveSerach(value.split('|')[0]) + "|" + self.recursiveSerach(value.split('|')[1]))
-            
+
+            elif '*' in value:
+                return(self.recursiveSerach(value.split('*')[0]) + "*")
+
             else:
-                before = ""
-                match ="" 
-                after= ""
-                temp = ""
-                keys_ordered = sorted(self.variables.keys(), key=len, reverse=True)
 
-                for key in keys_ordered:
-                    if key in value:
-                        before, match, after = value.partition(key)
-                        match = self.recursiveSerach(match)
-                        value = value.replace(key, "")     
+                if value == "":
+                    return value     
+            
+                if "'" in value:
+                    return (self.recursiveSerach(value.replace("'", "")))
 
-                        if before != "":
-                            before = self.recursiveSerach(before)
-                            value = value.replace(before, "") 
-
-                        if after != "":
-                            after = self.recursiveSerach(after) 
-                            value = value.replace(after, "") 
-
-                        temp = "(" + before + match + after + ")"
-          
-                return temp            
 
 
     def addConcatenation(self):
         for key, value in self.variables.items():
+            # value = value.replace("'", "")
             
             if not value.startswith('['):
 
                 expresiones = []
                 temp = ""
                 for i, x in enumerate(value):
-                    if x == "+" or x == "*" or x == "?"  or x == "|" or x == "(" or x == ")":
+                    if x == "+" or x == "*" or x == "?"  or x == "|" or x == "(" or x == ")" or x == "." or x == "[" or x == "]" :
                         if(temp != ""):
                             expresiones.append(temp)
                             temp = ""
@@ -243,12 +320,17 @@ class Scanner:
                             new_expr.append("•")
                         elif token == '(' and expresiones[i-1] == ')':
                             new_expr.append("•")
-                        elif expresiones[i-1] == '?' and (token in self.variables.keys() or token == '('):
+                        elif expresiones[i-1] == '?' and (token in self.variables.keys() or token == '(' or token == '['):
                             new_expr.append("•")
-                        elif expresiones[i-1] == '*' and (token in self.variables.keys() or token == '('):
+                        elif expresiones[i-1] == '*' and (token in self.variables.keys() or token == '(' or token == '['):
                             new_expr.append("•")
-                        elif expresiones[i-1] == '+' and (token in self.variables.keys() or token == '('):
+                        elif expresiones[i-1] == '+' and (token in self.variables.keys() or token == '(' or token == '['):
                             new_expr.append("•")
+                        elif token == "[" and (expresiones[i-1].replace("'","") in self.alphabet):
+                            new_expr.append("•")
+                        elif token in self.variables.keys() and expresiones[i-1] in self.alphabet and expresiones[i-1] not in self.operadores:
+                            new_expr.append("•")
+                        
                     new_expr.append(token)
 
                 self.variables[key] = ''.join(new_expr)

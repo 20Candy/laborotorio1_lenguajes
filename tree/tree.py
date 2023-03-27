@@ -75,7 +75,7 @@ class Tree:
         if(node.symbol == "|" or node.symbol == "•" or node.symbol == "*" or node.symbol == "+" or node.symbol == "?"):
             dot.node(str(id(node)), label=node.symbol)
         else:
-            dot.node(str(id(node)), label=(chr(int(node.symbol))))
+            dot.node(str(id(node)), label=(node.symbol))
 
 
         if node.left_child is not None:
