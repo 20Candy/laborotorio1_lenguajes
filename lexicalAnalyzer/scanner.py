@@ -85,7 +85,15 @@ class Scanner:
             if key in self.variables.keys():
                 self.final_regex += self.variables[key] + "|"
             else:
-                self.final_regex += str(Simbolo(key)) + "|"
+                simbol = ""
+                if len(key) > 1:
+                    for i in key:
+                        if i != "'" and i != '"' and i != " ":
+                            simbol += str(Simbolo(i)) + "•"
+                    self.final_regex += simbol[:-1] + "|"
+
+                else:
+                    self.final_regex += str(Simbolo(key)) + "|"
 
         self.final_regex = self.final_regex[:-1]
 
