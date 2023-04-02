@@ -43,7 +43,7 @@ class Scanner:
                 self.variables[key] = value
                 continue
 
-            # Al llegar a "rule tokens ="
+            # Al llegar a "rule tokens"
             # Se empieza a guardar los tokens
             if 'rule tokens' in line:
                 self.rule_tokens = True
