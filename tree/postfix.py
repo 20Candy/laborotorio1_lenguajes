@@ -4,13 +4,12 @@ class Postfix:
         self.alphabet = alphabet
         self.operators = operators
         self.precedence = precedence
-        self.expression = self.FormatExpression(self.expression)
+        self.expression = self.FormatExpression()
 
 
-    def FormatExpression(self, expression):
-        new_expression = expression.lower()
-        new_expression = new_expression.replace(" ", "")
-        new_expression = self.CheckEpislon(new_expression)
+    def FormatExpression(self):
+        new_expression = self.findExpression()
+        # new_expression = self.CheckEpislon(new_expression)
         new_expression = self.AddConcatenation(new_expression)
         return new_expression
     
@@ -21,28 +20,25 @@ class Postfix:
 
         return expression
 
-
     def AddConcatenation(self, expression):
-        new_expr = ""
+        new_expr = []
         for i, token in enumerate(expression):
             if i > 0:
                 if token in self.alphabet and expression[i-1] in self.alphabet:
-                    new_expr += "."
+                    new_expr.append("•")
                 elif token in self.alphabet and expression[i-1] == ')':
-                    new_expr += "."
+                    new_expr.append("•")
                 elif token == '(' and expression[i-1] in self.alphabet:
-                    new_expr += "."
+                    new_expr.append("•")
                 elif token == '(' and expression[i-1] == ')':
-                    new_expr += "."
+                    new_expr.append("•")
                 elif expression[i-1] == '?' and (token in self.alphabet or token == '('):
-                    new_expr += "."
+                    new_expr.append("•")
                 elif expression[i-1] == '*' and (token in self.alphabet or token == '('):
-                    new_expr += "."
+                    new_expr.append("•")
                 elif expression[i-1] == '+' and (token in self.alphabet or token == '('):
-                    new_expr += "."
-            new_expr += token
-
-        print(new_expr)
+                    new_expr.append("•")
+            new_expr.append(token)
            
         return new_expr
 
@@ -61,17 +57,19 @@ class Postfix:
                     raise ValueError("Parentesis vacio")
 
         for i, token in enumerate(self.expression):
-            if token in "|." and token != '(' and token != ')':
+            if token in "|•" and token != '(' and token != ')':
                 if i == 0 or i == len(self.expression)-1:
                     raise ValueError("Operador binario no puede estar al inicio o al final")
        
         for i, token in enumerate(self.expression):
             if token in "+*?":
+                print(self.expression[i-1])
                 if self.expression[i-1] not in self.alphabet and self.expression[i-1] != ')' and self.expression[i-1] not in "+*?":
                     raise ValueError("Operador unario debe tener un caracter o ) a la izquierda")
 
         for i, token in enumerate(self.expression):
-            if token in ".|":
+            if token in "•|":
+                print(self.expression[i-1])
                 if self.expression[i-1] not in self.alphabet and self.expression[i-1] != ')' and self.expression[i-1] not in "+*?":
                     raise ValueError("Operador binario debe tener un caracter o ) a la izquierda")
                 if self.expression[i+1] not in self.alphabet and self.expression[i+1] != '(' and self.expression[i+1] not in "+*?":
@@ -92,23 +90,45 @@ class Postfix:
             return None
 
         stack = []
-        postfix = ""
+        postfix = []
 
         for token in self.expression:
             if token in self.alphabet:
-                postfix += token
+                postfix.append(token) 
             elif token == '(':
                 stack.append(token)
             elif token == ')':
                 while stack and stack[-1] != '(':
-                    postfix += stack.pop()
+                    postfix.append(stack.pop())
                 stack.pop()
             else:
                 while stack and self.precedence[token] <= self.precedence[stack[-1]]:
-                    postfix += stack.pop()
+                    postfix.append(stack.pop())
                 stack.append(token)
 
         while stack:
             postfix+=stack.pop()
 
         return postfix
+
+    def findExpression(self):
+        expresiones = []
+        temp = ""
+
+        for i in range(len(self.expression)):
+            #si es un operador
+            current = self.expression[i]
+            if current == "+" or current == "*" or current == "?" or current == "•" or current == "|" or current == "(" or current == ")":
+                if(temp != ""):
+                    expresiones.append(temp)
+                    temp = ""
+                expresiones.append(current)
+
+            #si es un caracter
+            else:
+                temp += current
+
+        if(temp != ""):
+            expresiones.append(temp)
+
+        return expresiones
