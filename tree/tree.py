@@ -7,6 +7,7 @@ class Tree:
         self.expression = expression
         self.node = None
         self.stack = []
+        self.connections = []
     
     def BuildTree(self, filename="arbol"):
         for symbol in self.expression:
@@ -60,7 +61,7 @@ class Tree:
             node.left_child = self.stack.pop()
             self.stack.append(node)
         else:
-            node = Node(symbol)
+            node = Node(chr(int(symbol)))
             self.stack.append(node)
 
     def toGraph(self, node, filename="arbol"):
@@ -80,8 +81,14 @@ class Tree:
 
         if node.left_child is not None:
             self.GraphNode(node.left_child, dot)
-            dot.edge(str(id(node)), str(id(node.left_child)))
+            if (str(id(node)), str(id(node.left_child))) not in self.connections:
+                dot.edge(str(id(node)), str(id(node.left_child)))
+                self.connections.append((str(id(node)), str(id(node.left_child))))
 
         if node.right_child is not None:
             self.GraphNode(node.right_child, dot)
-            dot.edge(str(id(node)), str(id(node.right_child))) 
+            if (str(id(node)), str(id(node.right_child))) not in self.connections:
+                dot.edge(str(id(node)), str(id(node.right_child)))
+                self.connections.append((str(id(node)), str(id(node.right_child))))
+
+

@@ -16,7 +16,13 @@ class Scanner:
         with open(self.filename, 'r') as f:
             lines = f.readlines()
 
-        for line in lines:
+        for line in lines:  
+            #verificar comentarios no cerrados
+            if "(*" in line and "*)" not in line:
+                    raise Exception("Missing closing comment tag: " + line)
+            elif "*)" in line and "(*" not in line:
+                raise Exception("Missing opening comment tag: " + line)
+
             # Ignorar lineas en blanco
             if not line.strip():
                 continue
@@ -27,16 +33,29 @@ class Scanner:
                 key_value = line.split('=')
                 key = key_value[0].strip().split()[1]
                 value = key_value[1].strip()
+
+                # Verificar que si tiene [, tenga ]
+                if '[' in value and ']' not in value:
+                    raise Exception("Missing closing bracket: " + line)
+                elif ']' in value and '[' not in value:
+                    raise Exception("Missing opening bracket: " + line)
+
                 self.variables[key] = value
                 continue
 
             # Al llegar a "rule tokens ="
             # Se empieza a guardar los tokens
-            if 'rule tokens =' in line:
+            if 'rule tokens' in line:
                 self.rule_tokens = True
                 continue
 
             if self.rule_tokens:
+
+                # Verificar que si tiene {, tenga }
+                if '{' in value and '}' not in value:
+                    raise Exception("Missing closing curly bracket: " + line)
+                elif '}' in value and '{' not in value:
+                    raise Exception("Missing opening curly bracket: " + line)
 
                 temporary_word = ""
                 temporary_fun = ""
@@ -295,8 +314,13 @@ class Scanner:
                 if value == "":
                     return value     
             
-                if "'" in value:
+                elif "'" in value:
                     return (self.recursiveSerach(value.replace("'", "")))
+                
+                else:
+                    raise Exception("Variable not found: " + value + "")
+                
+
 
     # agregar concatenacion =====================================================================
     def addConcatenation(self):
