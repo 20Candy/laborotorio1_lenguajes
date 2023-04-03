@@ -15,7 +15,7 @@ alphabet = [str(i) for i in range(256)] # ASCII
 
 def main():
 
-    scanner = Scanner('./yalex/slr-1.yal')
+    scanner = Scanner('./yalex/slr-4.yal')
     scanner.scan()
     postfix = Postfix(scanner.final_regex, alphabet, operators, precedence)
     postfix = postfix.ConvertToPostfix()

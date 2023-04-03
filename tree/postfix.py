@@ -63,13 +63,11 @@ class Postfix:
        
         for i, token in enumerate(self.expression):
             if token in "+*?":
-                print(self.expression[i-1])
                 if self.expression[i-1] not in self.alphabet and self.expression[i-1] != ')' and self.expression[i-1] not in "+*?":
                     raise ValueError("Operador unario debe tener un caracter o ) a la izquierda")
 
         for i, token in enumerate(self.expression):
             if token in "•|":
-                print(self.expression[i-1])
                 if self.expression[i-1] not in self.alphabet and self.expression[i-1] != ')' and self.expression[i-1] not in "+*?":
                     raise ValueError("Operador binario debe tener un caracter o ) a la izquierda")
                 if self.expression[i+1] not in self.alphabet and self.expression[i+1] != '(' and self.expression[i+1] not in "+*?":
