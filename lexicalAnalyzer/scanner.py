@@ -165,7 +165,7 @@ class Scanner:
                             if temp in self.alphabet:
                                 continue
                             else:
-                                tempFinal += temp[:-1] + "|"
+                                tempFinal += str(ord(temp[:-1])) + "|"
                                 temp = ""
                                 contador += 1
 
