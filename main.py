@@ -25,74 +25,15 @@ def main():
     tree = Tree(postfix)
     tree.BuildTree()
 
+    direct = Direct()
+    direct = direct.Direct(postfix)    
 
-    # expresion = ["(a*|b*)c", "(b|b)*abb(a|b)*", "(a|ε)b(a+)c?", "(a|b)*a(a|b)(a|b)","b*ab?", "b+abc+", "ab*ab*", "0(0|1)*0", "((ε|0)1*)*", "(0|1)*0(0|1)(0|1)", "(00)*(11)*", "(0|1)1*(0|1)", "0?(1|ε)?0*", "((1?)*)*", "(01)*(10)*"]
-
-
-    # for i in range(len(expresion)):
-    #     print(f"\t{i+1}. {expresion[i]}")
-
-    # opcion = int(input("\nIngrese el número de la expresión regular a evaluar: "))
-
-    # if opcion > 0 and opcion <= len(expresion):
-
-    #     print("********************************************* Expresion Regular *********************************************")
-    #     # expresion = input("Ingrese la expresion regular: ")
-    #     postfix = Postfix(expresion[opcion-1], alphabet, operators, precedence)
+    test = "./pruebas/prueba.txt"
+    with open(test) as f:
+        testLines = f.readlines()
         
-    #     print("\n********************************************* Expresion Postfix *********************************************")
-    #     postfix = postfix.ConvertToPostfix()
-    #     if(postfix == None):
-    #         return
-    #     print(postfix)
-
-    #     tree = Tree(postfix)
-    #     tree.BuildTree()
-
-    #     print("\n********************************************* AFN *********************************************")
-
-    #     afn = Afn()
-    #     afn = afn.BuildAfn(tree.node)
-
-    #     print("\n********************************************* AFD *********************************************")
-
-    #     afd = Afd()
-    #     afd = afd.BuildAfd(afn)
-
-    #     print("\n********************************************* Minimizacion *********************************************")
-
-    #     minimization = Minimization()
-    #     minimization.Minimize(afd)
-
-    #     print("\n********************************************* Directo *********************************************")
-    #     direct = Direct()
-    #     direct = direct.Direct(postfix)
-
-    #     print("\n********************************************* Minimzacion con Directo *********************************************")
-    #     minimization = Minimization("MinimizationDirect")
-    #     minimization.Minimize(direct)
-
-    #     print("\n********************************************* Simulación *********************************************")
-    #     cadena = input("Ingrese la cadena a evaluar: ")
-    #     simulation = Simulation(afn, cadena)
-    #     if(simulation.simulation()):
-    #         print("La cadena es aceptada por afn")
-    #     else:
-    #         print("La cadena no es aceptada por afn")
-
-    #     simulation = Simulation(afd, cadena)
-    #     if(simulation.simulation()):
-    #         print("La cadena es aceptada por afd subconjuntos")
-    #     else:
-    #         print("La cadena no es aceptada por afd subconjuntos")
-
-    #     simulation = Simulation(direct, cadena)
-    #     if(simulation.simulation()):
-    #         print("La cadena es aceptada por directo")
-    #     else:
-    #         print("La cadena no es aceptada por directo")
-
-        
+    # simulation = Simulation(testLines, direct)
+    # simulation.simulate()
 
 
 

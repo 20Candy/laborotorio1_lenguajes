@@ -12,7 +12,9 @@ class Direct():
 
     def Direct(self, postfix_expression):
 
-        postfix_expression = postfix_expression + "#."
+        postfix_expression.append("#")
+        postfix_expression.append("•")
+
         tree = Tree(postfix_expression)
         tree.BuildTree("arbol_direct")
                
@@ -34,9 +36,13 @@ class Direct():
         counter = 0
 
         # initstate  es firstpos del nodo raiz
-
-        if "#" in(s.symbol for s in node.firstpos.elements):
-            initstate = State(counter, 'final_inicial',  node.firstpos)
+        final = False
+        for element in node.firstpos.elements:
+            if "#" in element.symbol:
+                final = True
+        
+        if final:
+            initstate = State(counter, 'final_inicial',  node.firstpos, node.symbol)
             self.automata.finalStates.AddItem(initstate)
         else:
             initstate = State(counter,"inicial", node.firstpos)
@@ -58,9 +64,18 @@ class Direct():
 
                     if alreadyExists is None:
 
-                        if "#" in(s.symbol for s in union.elements):
-                            new_state = State(counter, 'final', union)
+                        final = False
+                        token = None
+
+                        for element in union.elements:
+                            if "#" in element.symbol:
+                                final = True
+                                token = element.symbol
+
+                        if final:
+                            new_state = State(counter, 'final', union, token)
                             self.automata.finalStates.AddItem(new_state)
+
                         else:                     
                             new_state = State(counter, 'normal', union)
 
@@ -120,7 +135,7 @@ class Direct():
                 self.checkNullable(node.left_child)
                 node.nullable = True
                 
-            elif node.symbol == '.':
+            elif node.symbol == '•':
                 self.checkNullable(node.left_child)
                 self.checkNullable(node.right_child)
 
@@ -158,7 +173,7 @@ class Direct():
                 self.checkFirstPos(node.left_child)
                 node.firstpos = node.left_child.firstpos
 
-            elif node.symbol == '.':
+            elif node.symbol == '•':
                 self.checkFirstPos(node.left_child)
                 self.checkFirstPos(node.right_child)
 
@@ -191,7 +206,7 @@ class Direct():
                 self.checkLastPos(node.left_child)
                 node.lastpos = node.left_child.lastpos
 
-            elif node.symbol == '.':
+            elif node.symbol == '•':
                 self.checkLastPos(node.left_child)
                 self.checkLastPos(node.right_child)
 
@@ -207,7 +222,7 @@ class Direct():
 
 
     def checkFollowPos(self,node):
-        if node.symbol == ".":
+        if node.symbol == "•":
             first_pos_right = node.right_child.firstpos
             last_pos_left = node.left_child.lastpos
 
@@ -244,7 +259,7 @@ class Direct():
             
     def addSymbols(self, node):
         if node.is_leaf():
-            if node.symbol != 'ε' and node.symbol != '#':
+            if node.symbol != 'ε' and '#' not in node.symbol:
                 if node.symbol not in self.automata.symbols.elements:
                     self.automata.symbols.AddItem(node.symbol)
         else:
