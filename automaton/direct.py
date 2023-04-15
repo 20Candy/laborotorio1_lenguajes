@@ -71,6 +71,7 @@ class Direct():
                             if "#" in element.symbol:
                                 final = True
                                 token = element.symbol
+                                self.automata.tokens.append(token)
 
                         if final:
                             new_state = State(counter, 'final', union, token)
@@ -273,6 +274,4 @@ class Direct():
             if element == node:
                 return True
         return False
-
-
 

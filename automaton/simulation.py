@@ -4,6 +4,7 @@ class Simulation:
     def __init__(self, automaton, input):
         self.automaton = automaton
         self.input = input
+        self.cadena = ""
     
     def simulation(self):
         afn = False
@@ -23,11 +24,12 @@ class Simulation:
             next_states = Set()
             for state in current_states.elements:
                 for transition in self.automaton.transitions:
-                    if transition[0].id == state.id and transition[2] == symbol:
+                    if transition[0].id == state.id and chr(int(transition[2])) == symbol:
                         if self.stateAlreadyExists(transition[1], next_states) is None:
                             next_states.AddItem(transition[1])
 
             if next_states.IsEmpty():
+                print("Error lexico")
                 return False
             
             if afn:
@@ -41,10 +43,16 @@ class Simulation:
             
             current_states = next_states
 
+            self.cadena += symbol
+
+
+
         for state in current_states.elements:
             if state in self.automaton.finalStates.elements:
+                print(self.cadena, state.token)
                 return True
         
+        print("Error lexico")
         return False
     
     def stateAlreadyExists(self, state, states):

@@ -8,6 +8,7 @@ class Automaton:
         self.symbols = Set()
         self.initialState = None
         self.transitions = []
+        self.tokens = []
 
     def addState(self, estado):
         self.states.AddItem(estado)

@@ -29,11 +29,13 @@ def main():
     direct = direct.Direct(postfix)    
 
     test = "./pruebas/prueba.txt"
-    with open(test) as f:
-        testLines = f.readlines()
-        
-    # simulation = Simulation(testLines, direct)
-    # simulation.simulate()
+    with open(test, "r") as archivo:
+        contenido = archivo.read()
+
+
+    print("\n==================================SIMULACION==================================")   
+    simulation = Simulation(direct, contenido)
+    simulation.simulation()
 
 
 

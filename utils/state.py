@@ -5,7 +5,7 @@ class State:
         self.id = id
         self.type = type
         self.AFN_states = AFN_states
-        token = token
+        self.token = token
 
     def __str__(self):
         return (str(self.id)+ " " + self.type)
