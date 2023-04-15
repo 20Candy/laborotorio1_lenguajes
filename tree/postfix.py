@@ -46,7 +46,10 @@ class Postfix:
 
         for token in self.expression:
             if token not in self.alphabet and token not in self.operators:
-                raise ValueError("Caracter invalido: " + token)
+                if token.startswith('#'):
+                    continue
+                else:
+                    raise ValueError("Caracter invalido: " + token)
 
         if self.expression.count('(') != self.expression.count(')'):
             raise ValueError("Parentesis sin cerrar")
@@ -68,9 +71,9 @@ class Postfix:
 
         for i, token in enumerate(self.expression):
             if token in "•|":
-                if self.expression[i-1] not in self.alphabet and self.expression[i-1] != ')' and self.expression[i-1] not in "+*?":
+                if self.expression[i-1] not in self.alphabet and not self.expression[i-1].startswith('#') and self.expression[i-1] != ')' and self.expression[i-1] not in "+*?":
                     raise ValueError("Operador binario debe tener un caracter o ) a la izquierda")
-                if self.expression[i+1] not in self.alphabet and self.expression[i+1] != '(' and self.expression[i+1] not in "+*?":
+                if self.expression[i+1] not in self.alphabet and not self.expression[i+1].startswith('#') and self.expression[i+1] != '(' and self.expression[i+1] not in "+*?":
                     raise ValueError("Operador binario debe tener un caracter o ( a la derecha")
 
         for i, token in enumerate(self.expression):
@@ -91,7 +94,7 @@ class Postfix:
         postfix = []
 
         for token in self.expression:
-            if token in self.alphabet:
+            if token in self.alphabet or token.startswith('#'):
                 postfix.append(token) 
             elif token == '(':
                 stack.append(token)

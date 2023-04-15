@@ -25,6 +25,7 @@ class Scanner:
 
             # Ignorar lineas en blanco
             if not line.strip():
+                self.rule_tokens = False
                 continue
 
             # Si encuentra un let, guardar la palabra siguiente como llave
@@ -87,7 +88,7 @@ class Scanner:
                         else:
                             temporary_word += x
 
-                self.tokens[temporary_word] = temporary_fun
+                self.tokens[temporary_word] = temporary_fun.replace("return", "").replace("{", "").replace("}","").strip()
 
         #convertir a regex las expresiones entre []
         self.convertRegex()
@@ -101,18 +102,24 @@ class Scanner:
       
         #armar la expresion final 
         for key, value in self.tokens.items():
+
+            agregar = ""
+
             if key in self.variables.keys():
-                self.final_regex += self.variables[key] + "|"
+                agregar += self.variables[key]
             else:
                 simbol = ""
                 if len(key) > 1:
                     for i in key:
                         if i != "'" and i != '"' and i != " ":
                             simbol += str(Simbolo(i)) + "•"
-                    self.final_regex += simbol[:-1] + "|"
+                    agregar += simbol[:-1] 
 
                 else:
-                    self.final_regex += str(Simbolo(key)) + "|"
+                    agregar += str(Simbolo(key))
+
+            #agregar .#funcion
+            self.final_regex += agregar + "•#" + value + "|"
 
         self.final_regex = self.final_regex[:-1]
 

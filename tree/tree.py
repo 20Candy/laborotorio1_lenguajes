@@ -61,7 +61,10 @@ class Tree:
             node.left_child = self.stack.pop()
             self.stack.append(node)
         else:
-            node = Node(chr(int(symbol)))
+            if symbol.startswith('#'):
+                node = Node(symbol)
+            else:
+                node = Node(chr(int(symbol)))
             self.stack.append(node)
 
     def toGraph(self, node, filename="arbol"):
