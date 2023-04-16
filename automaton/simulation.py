@@ -4,7 +4,12 @@ class Simulation:
     def __init__(self, automaton, input):
         self.automaton = automaton
         self.input = input
+        self.result = []
         self.cadena = ""
+        self.position = 0
+
+        self.directSimulation()
+        print(self.result)
     
     def simulation(self):
         afn = False
@@ -61,3 +66,44 @@ class Simulation:
                 return element
         return None       
 
+
+    def directSimulation(self):
+
+        current_states = Set()
+        current_states.AddItem(self.automaton.initialState)
+
+        if self.position == len(self.input) -1:
+            return
+
+        for i in range (self.position, len(self.input)):
+
+            next_states = Set()
+            for state in current_states.elements:
+                for transition in self.automaton.transitions:
+                    if transition[0].id == state.id and chr(int(transition[2])) == self.input[i]:
+                        if self.stateAlreadyExists(transition[1], next_states) is None:
+                            next_states.AddItem(transition[1])
+                    
+            if next_states.IsEmpty():
+                if self.cadena == "":
+                    self.result.append((self.input[i], "Error Lexico"))
+                    # print(self.input[i], "Error Lexico")
+
+                    self.position = i + 1
+                    self.cadena = ""
+                    self.directSimulation()
+                break
+            
+            else:      
+                current_states = next_states
+                self.cadena += self.input[i]
+
+        for state in current_states.elements:
+            if state in self.automaton.finalStates.elements:
+                self.result.append((self.cadena, state.token))
+                # print(self.cadena, state.token)
+
+                self.position = i
+                self.cadena = ""
+                self.directSimulation()
+                        

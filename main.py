@@ -35,8 +35,6 @@ def main():
 
     print("\n==================================SIMULACION==================================")   
     simulation = Simulation(direct, contenido)
-    simulation.simulation()
-
 
 
 if __name__ == "__main__":
