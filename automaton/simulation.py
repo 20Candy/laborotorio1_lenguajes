@@ -80,7 +80,7 @@ class Simulation:
             next_states = Set()
             for state in current_states.elements:
                 for transition in self.automaton.transitions:
-                    if transition[0].id == state.id and chr(int(transition[2])) == self.input[i]:
+                    if transition[0].id == state.id and (int(transition[2]) == ord(self.input[i])):
                         if self.stateAlreadyExists(transition[1], next_states) is None:
                             next_states.AddItem(transition[1])
                     
@@ -100,7 +100,11 @@ class Simulation:
 
         for state in current_states.elements:
             if state in self.automaton.finalStates.elements:
-                self.result.append((self.cadena, state.token))
+
+                if state.token == "#":
+                    self.result.append((self.cadena, None))
+                else:
+                    self.result.append((self.cadena, state.token))
                 # print(self.cadena, state.token)
 
                 self.position = i

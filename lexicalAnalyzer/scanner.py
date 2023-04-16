@@ -12,83 +12,98 @@ class Scanner:
         self.operadores = ["|", "*", "+", "?", "(", ")", "•"]
         
     def scan(self):
-        #leer el archivo
+
+        word = ""
+        rule_tokens = []
+        functions = []
+
         with open(self.filename, 'r') as f:
-            lines = f.readlines()
+            contenido = f.read()
 
-        for line in lines:  
-            #verificar comentarios no cerrados
-            if "(*" in line and "*)" not in line:
-                    raise Exception("Missing closing comment tag: " + line)
-            elif "*)" in line and "(*" not in line:
-                raise Exception("Missing opening comment tag: " + line)
+        activeRule = False
 
-            # Ignorar lineas en blanco
-            if not line.strip():
-                self.rule_tokens = False
-                continue
+        #separar entre rule tokens y functions
+        for symbol in contenido:
+            if activeRule:
+                if symbol == "|":
+                    if word:
+                        word = ""
+                    rule_tokens.append(symbol.strip())
+                elif symbol not in ["\t", "\n"]:
+                    word += symbol
+                    if "{" in word and "}" in word:
+                        word = word.strip()
+                        rule_tokens.append(word)
+                        word = ""
+                    elif "(*" in word and "*)" in word:
+                        word = ""
 
-            # Si encuentra un let, guardar la palabra siguiente como llave
-            # del diccionario y lo siguiente al = como valor
-            if 'let' in line:
-                key_value = line.split('=')
-                key = key_value[0].strip().split()[1]
-                value = key_value[1].strip()
+            else:
+                word += symbol
 
-                # Verificar que si tiene [, tenga ]
-                if '[' in value and ']' not in value:
-                    raise Exception("Missing closing bracket: " + line)
-                elif ']' in value and '[' not in value:
-                    raise Exception("Missing opening bracket: " + line)
+                if "\n" in word:
+                    if word:
+                        if "let" in word:
+                            word  = word.strip()[3:].strip()
+                            functions.append(word)
 
-                self.variables[key] = value
-                continue
+                        if "rule" in word:
+                            activeRule = True
+                        word = ""   
 
-            # Al llegar a "rule tokens"
-            # Se empieza a guardar los tokens
-            if 'rule tokens' in line:
-                self.rule_tokens = True
-                continue
 
-            if self.rule_tokens:
+        for rule in rule_tokens:
 
-                # Verificar que si tiene {, tenga }
-                if '{' in value and '}' not in value:
-                    raise Exception("Missing closing curly bracket: " + line)
-                elif '}' in value and '{' not in value:
-                    raise Exception("Missing opening curly bracket: " + line)
-
+            if not rule == "|":
                 temporary_word = ""
                 temporary_fun = ""
                 fun = False
                 in_comment = False
 
-                for i, x in enumerate(line):
+                for symbol in rule:
 
-                    # Verificar si estamos dentro de un comentario
-                    if x == "(" and i < len(line) - 1 and line[i+1] == "*":
-                        in_comment = True
-                    elif x == "*" and i < len(line) - 1 and line[i+1] == ")":
-                        in_comment = False
-                        continue  # Ignorar el segundo caracter del comentario
-
-                    # Ignorar los caracteres si estamos dentro de un comentario
-                    if in_comment:
-                        continue
-
-                    if x != " "  and x != "\t" and x != "\n" and x != "'" and x != "|":
-                        if x == "{":
+                    if symbol != "\t" and symbol != "\n" and symbol != "'":
+                        if symbol == "{":
                             fun = True
-                        elif x == "}":
-                            temporary_fun += x
+                        elif symbol == "}":
+                            temporary_fun += symbol
                             break
                         
                         if fun:
-                            temporary_fun += x
+                            temporary_fun += symbol
                         else:
-                            temporary_word += x
+                            temporary_word += symbol
 
-                self.tokens[temporary_word] = temporary_fun.replace("return", "").replace("{", "").replace("}","").strip()
+                #limpiar comentarios
+                if "(*" in temporary_word and "*)" in temporary_word:
+                    start_index = temporary_word.index("(*")
+                    end_index = temporary_word.index("*)", start_index) + 2
+                    temporary_word = temporary_word[:start_index] + temporary_word[end_index:]
+                            
+                if "(*" in temporary_fun and "*)" in temporary_fun:
+                    start_index = temporary_fun.index("(*")
+                    end_index = temporary_fun.index("*)", start_index) + 2
+                    temporary_fun = temporary_fun[:start_index] + temporary_fun[end_index:]
+
+
+                if "return" in temporary_fun:
+                    temporary_fun = temporary_fun.replace("return", "")
+            
+                self.tokens[temporary_word.strip()] = temporary_fun.replace("{", "").replace("}","").strip()
+
+
+        for function in functions:
+            key_value = function.split('=')
+            key = key_value[0].strip()
+            value = key_value[1].strip()
+
+            if '[' in value and ']' not in value:
+                raise Exception("Missing closing bracket: " + function)
+            elif ']' in value and '[' not in value:
+                raise Exception("Missing opening bracket: " + function)
+
+            self.variables[key.strip()] = value.strip()
+
 
         #convertir a regex las expresiones entre []
         self.convertRegex()
@@ -186,7 +201,7 @@ class Scanner:
                     enComillas = ""
                     tempFinal = []
                     for i, x in enumerate(inside):
-                        if x == "'":
+                        if x == "'" :
                             if open:
                                 if enComillas == "\\s":
                                     tempFinal.append(str(ord(" ")))
@@ -324,11 +339,12 @@ class Scanner:
                 elif "'" in value:
                     return (self.recursiveSerach(value.replace("'", "")))
                 
-                else:
-                    raise Exception("Variable not found: " + value + "")
+                elif " " in value:
+                    return (self.recursiveSerach(value.replace(" ", "")))
                 
-
-
+                else:
+                    raise Exception("Variable not found: " + value +  "\nCURRENT VARIABLES: " + str(self.variables.keys()))
+                
     # agregar concatenacion =====================================================================
     def addConcatenation(self):
         for key, value in self.variables.items():
