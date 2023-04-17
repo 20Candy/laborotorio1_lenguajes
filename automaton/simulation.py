@@ -100,7 +100,11 @@ class Simulation:
 
         for state in current_states.elements:
             if state in self.automaton.finalStates.elements:
-                self.result.append((self.cadena, state.token))
+
+                if state.token == "#":
+                    self.result.append((self.cadena, None))
+                else:
+                    self.result.append((self.cadena, state.token))
                 # print(self.cadena, state.token)
 
                 self.position = i
