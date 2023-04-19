@@ -28,7 +28,7 @@ class Scanner:
                     if word.strip() != "":
                         rule_tokens.append(word.strip())
                         word = ""
-                elif symbol not in ["\t", "\n"]:
+                else:
                     word += symbol
                     if "{" in word and "}" in word:
                         word = word.strip()
@@ -68,7 +68,7 @@ class Scanner:
             
                 for symbol in rule:
 
-                    if symbol != " "  and symbol != "\t" and symbol != "\n" and symbol != "'" and symbol != "|":
+                    if symbol != "'" and symbol != "|":
                         if symbol == "{":
                             fun = True
                         elif symbol == "}":
@@ -91,13 +91,8 @@ class Scanner:
                     end_index = temporary_fun.index("*)", start_index) + 2
                     temporary_fun = temporary_fun[:start_index] + temporary_fun[end_index:]
 
-                #quitar return
-                if "return" in temporary_fun:
-                    temporary_fun = temporary_fun.replace("return", "").replace("{", "").replace("}","").strip()
 
-                    
-
-                self.tokens[temporary_word.strip()] = temporary_fun
+                self.tokens[temporary_word.strip()] = temporary_fun.replace("{", "").replace("}","").strip()
 
         for function in functions:
             key_value = function.split('=')

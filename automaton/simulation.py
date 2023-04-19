@@ -50,8 +50,6 @@ class Simulation:
 
             self.cadena += symbol
 
-
-
         for state in current_states.elements:
             if state in self.automaton.finalStates.elements:
                 print(self.cadena, state.token)

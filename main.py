@@ -5,6 +5,7 @@ from automaton.afd import Afd
 from automaton.minimization import Minimization
 from automaton.direct import Direct
 from automaton.simulation import Simulation
+from simulacion.simulacion import tokens
 
 from lexicalAnalyzer.scanner import Scanner
 
@@ -15,7 +16,7 @@ alphabet = [str(i) for i in range(256)] # ASCII
 
 def main():
 
-    scanner = Scanner('./yalex/slr-0.yal')
+    scanner = Scanner('./yalex/slr-3.yal')
     scanner.scan()
     postfix = Postfix(scanner.final_regex, alphabet, operators, precedence)
     postfix = postfix.ConvertToPostfix()
@@ -34,7 +35,29 @@ def main():
 
 
     print("\n==================================SIMULACION==================================")   
+    #crear archivo simulacion.py
+    with open('./simulacion/simulacion.py', 'w') as f:
+        f.write('def tokens(listaTokens):\n')
+        f.write('\tfor tokenValue in listaTokens: \n')
+        f.write('\t\ttoken = tokenValue[0] \n')
+
+        for key, value in scanner.tokens.items():
+            f.write('\t\tif token == ' + repr(key) + ':\n')
+            if value == '':
+                f.write('\t\t\treturn None\n')
+            else:
+                f.write('\t\t\t' + value + '\n')
+
+        f.write('\t\telse: \n\t\t\treturn ' + '"Error sintactico"')
+
+    #crear simulacion
     simulation = Simulation(direct, contenido)
+
+    #mandar simulacion a simulacion.py
+    tokens(simulation.result)
+
+
+    
 
 
 if __name__ == "__main__":
