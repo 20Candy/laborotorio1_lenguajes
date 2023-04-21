@@ -18,7 +18,7 @@ def main():
 
     scanner = Scanner('./yalex/slr-3.yal')
     scanner.scan()
-    postfix = Postfix(scanner.final_regex, alphabet, operators, precedence)
+    postfix = Postfix(scanner, alphabet, operators, precedence)
     postfix = postfix.ConvertToPostfix()
 
     print(postfix)
@@ -39,7 +39,7 @@ def main():
     with open('./simulacion/simulacion.py', 'w') as f:
         f.write('def tokens(listaTokens):\n')
         f.write('\tfor tokenValue in listaTokens: \n')
-        f.write('\t\ttoken = tokenValue[0] \n')
+        f.write('\t\ttoken = tokenValue[1].replace("#","") \n')
 
         for key, value in scanner.tokens.items():
             f.write('\t\tif token == ' + repr(key) + ':\n')

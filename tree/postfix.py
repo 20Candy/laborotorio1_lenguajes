@@ -1,11 +1,18 @@
 class Postfix:
-    def __init__(self, expression, alphabet, operators, precedence):
-        self.expression = expression
-        self.alphabet = alphabet
+    def __init__(self, scanner, alphabet, operators, precedence):
+        self.expression = scanner.final_regex
+        self.tokens = scanner.tokens.keys()
+        self.alphabet = self.TokenAlphabet(alphabet,self.tokens)
         self.operators = operators
         self.precedence = precedence
         self.expression = self.FormatExpression()
 
+    def TokenAlphabet(self, alphabet, tokens):
+        alphabet = alphabet
+        for token in tokens:
+            alphabet.append("#" + token)
+
+        return alphabet
 
     def FormatExpression(self):
         new_expression = self.findExpression()
@@ -40,6 +47,7 @@ class Postfix:
                     new_expr.append("•")
             new_expr.append(token)
            
+        print(new_expr)
         return new_expr
 
     def ValidateExpression(self):
@@ -116,20 +124,40 @@ class Postfix:
         expresiones = []
         temp = ""
 
+        token = False
+        tokenString = ""
+
         for i in range(len(self.expression)):
-            #si es un operador
+            
             current = self.expression[i]
-            if current == "+" or current == "*" or current == "?" or current == "•" or current == "|" or current == "(" or current == ")":
-                if(temp != ""):
-                    expresiones.append(temp)
-                    temp = ""
-                expresiones.append(current)
 
-            #si es un caracter
-            else:
-                temp += current
+            #si es # 
+            if current == "#":
+                token = True
 
-        if(temp != ""):
-            expresiones.append(temp)
+            if token:
+                if tokenString.replace("#","") in self.tokens:
+                    expresiones.append(tokenString)
+                    tokenString = ""
+                    token = False
+
+                else:
+                    tokenString += current
+
+            if not token:
+            #si es un operador
+
+                if current == "+" or current == "*" or current == "?" or current == "•" or current == "|" or current == "(" or current == ")":
+                    if(temp != ""):
+                        expresiones.append(temp)
+                        temp = ""
+                    expresiones.append(current)
+
+                #si es un caracter
+                else:
+                    temp += current
+
+        if(tokenString != ""):
+            expresiones.append(tokenString)
 
         return expresiones
