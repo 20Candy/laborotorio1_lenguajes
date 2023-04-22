@@ -41,20 +41,25 @@ def main():
         f.write('\tfor tokenValue in listaTokens: \n')
         f.write('\t\ttoken = tokenValue[1].replace("#","") \n')
 
-        for key, value in scanner.tokens.items():
-            f.write('\t\tif token == ' + repr(key) + ':\n')
+        for i, (key, value) in enumerate(scanner.tokens.items()):
+            if i == 0:
+                f.write('\t\tif token == ' + repr(key) + ':\n')
+            else:
+
+                f.write('\t\telif token == ' + repr(key) + ':\n')
+                
             if value == '':
                 f.write('\t\t\treturn None\n')
             else:
                 f.write('\t\t\t' + value + '\n')
 
-        f.write('\t\telse: \n\t\t\treturn ' + '"Error sintactico"')
+        f.write('\t\telse: \n\t\t\tprint(' + '"Error sintactico"' + ')')
 
     #crear simulacion
     simulation = Simulation(direct, contenido)
 
     #mandar simulacion a simulacion.py
-    tokens(simulation.result)
+    print(tokens(simulation.result))
 
 
     

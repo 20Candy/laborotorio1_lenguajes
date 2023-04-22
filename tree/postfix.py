@@ -132,19 +132,19 @@ class Postfix:
             current = self.expression[i]
 
             #si es # 
-            if current == "#":
-                token = True
-
-            if token:
-                if tokenString.replace("#","") in self.tokens:
-                    expresiones.append(tokenString)
+            if current == '"':
+                if tokenString != "":
+                    expresiones.append(tokenString.replace('"', ''))
                     tokenString = ""
                     token = False
-
+                    continue
                 else:
-                    tokenString += current
+                    token = True
 
-            if not token:
+            if token:
+                tokenString += current
+
+            else:
             #si es un operador
 
                 if current == "+" or current == "*" or current == "?" or current == "•" or current == "|" or current == "(" or current == ")":
