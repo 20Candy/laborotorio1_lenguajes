@@ -2,16 +2,30 @@ def tokens(listaTokens):
 	for tokenValue in listaTokens: 
 		token = tokenValue[1].replace("#","") 
 		if token == 'ws':
-			print("white")
+			return None
+		elif token == 'id':
+			return ID
 		elif token == 'number':
-			print("number")
+			return NUMBER
+		elif token == ';':
+			return SEMICOLON
+		elif token == '":="':
+			return ASSIGNOP
+		elif token == '<':
+			return LT
+		elif token == '=':
+			return EQ
 		elif token == '+':
-			print("PLUS")
+			return PLUS
+		elif token == '-':
+			return MINUS
 		elif token == '*':
-			print("TIMES")
+			return TIMES
+		elif token == '/':
+			return DIV
 		elif token == '(':
-			print("LPAREN")
+			return LPAREN
 		elif token == ')':
-			print("RPAREN")
+			return RPAREN
 		else: 
 			print("Error sintactico")

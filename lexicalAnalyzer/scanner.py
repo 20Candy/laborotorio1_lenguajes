@@ -130,7 +130,7 @@ class Scanner:
                     agregar += str(Simbolo(key))
 
             #agregar .#funcion
-            self.final_regex += agregar + '•"#' + key + '"|'
+            self.final_regex += agregar + '•"#' + key.replace('"',"") + '"|'
 
         self.final_regex = self.final_regex[:-1]
 
