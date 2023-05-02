@@ -1,3 +1,4 @@
+from lexicalAnalyzer.scannerYapal import ScannerYapal
 from tree.postfix import Postfix
 from tree.tree import Tree
 from automaton.afn import Afn
@@ -7,7 +8,6 @@ from automaton.direct import Direct
 from automaton.simulation import Simulation
 from simulacion.simulacion import tokens
 
-from lexicalAnalyzer.scanner import Scanner
 
 #alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'ε', 'E', 'ϵ']
 operators = ['|', '*', '+', '?', '(', ')', '•']
@@ -16,53 +16,9 @@ alphabet = [str(i) for i in range(256)] # ASCII
 
 def main():
 
-    scanner = Scanner('./yalex/slr-4.yal')
+    scanner = ScannerYapal('./yapar/slr-1.yalp')
     scanner.scan()
-    postfix = Postfix(scanner, alphabet, operators, precedence)
-    postfix = postfix.ConvertToPostfix()
 
-    print(postfix)
-
-    tree = Tree(postfix)
-    tree.BuildTree()
-
-    direct = Direct()
-    direct = direct.Direct(postfix)    
-
-    test = "./pruebas/prueba.txt"
-    with open(test, "r") as archivo:
-        contenido = archivo.read()
-
-
-    print("\n==================================SIMULACION==================================")   
-    #crear archivo simulacion.py
-    with open('./simulacion/simulacion.py', 'w') as f:
-        f.write('def tokens(listaTokens):\n')
-        f.write('\tfor tokenValue in listaTokens: \n')
-        f.write('\t\ttoken = tokenValue[1].replace("#","") \n')
-
-        for i, (key, value) in enumerate(scanner.tokens.items()):
-            if i == 0:
-                f.write('\t\tif token == ' + repr(key) + ':\n')
-            else:
-
-                f.write('\t\telif token == ' + repr(key) + ':\n')
-                
-            if value == '':
-                f.write('\t\t\treturn None\n')
-            else:
-                f.write('\t\t\t' + value + '\n')
-
-        f.write('\t\telse: \n\t\t\tprint(' + '"Error sintactico"' + ')')
-
-    #crear simulacion
-    simulation = Simulation(direct, contenido)
-
-    #mandar simulacion a simulacion.py
-    print(tokens(simulation.result))
-
-
-    
 
 
 if __name__ == "__main__":
