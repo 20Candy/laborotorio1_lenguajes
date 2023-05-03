@@ -27,7 +27,7 @@ class SLR(Automaton):
                 produccion = produccion[0] + "=>" + produccion[1]
                 self.start = produccion
                 cerradura  = self.cerradura(produccion)
-                self.initialState = State(cerradura, "inicial", None, None, self.cerradura(produccion))
+                self.initialState = State("\n".join(cerradura), "inicial", None, None, self.cerradura(produccion))
                 break
 
     
@@ -97,10 +97,10 @@ class SLR(Automaton):
 
                     if right_part_InitState == left_part_produccion:
 
-                        return State(producciones, "final", None, None, producciones)
+                        return State("\n".join(producciones), "final", None, None, producciones)
             else:
 
-                return State(producciones, "normal", None, None, producciones)
+                return State("\n".join(producciones), "normal", None, None, producciones)
         
         else:
             return None
