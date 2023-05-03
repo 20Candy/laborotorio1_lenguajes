@@ -63,7 +63,7 @@ class ScannerYapal:
                     lhs = production[0].strip()
                     rhs = [p.strip() for p in production[1].split("|")]
 
-                    self.productions[lhs] = rhs if len(rhs) > 1 else rhs[0]
+                    self.productions[lhs] = rhs if len(rhs) > 1 else [rhs[0]]
                     production = ''
                     
                 else:
@@ -72,5 +72,4 @@ class ScannerYapal:
                     else:
                         production += symbol
 
-        print(self.tokens)
-        print(self.productions)
+        return (self.tokens, self.productions)
