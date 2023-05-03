@@ -13,6 +13,7 @@ class SLR(Automaton):
         self.states = Set()
         self.transitions = []
         self.finalStates = Set()
+        self.start = None
 
 
     def SLR(self,):
@@ -24,6 +25,7 @@ class SLR(Automaton):
                 produccion = produccion.split("=>")
                 produccion[1] = " ." + produccion[1]
                 produccion = produccion[0] + "=>" + produccion[1]
+                self.start = produccion
                 cerradura  = self.cerradura(produccion)
                 self.initialState = State(cerradura, "inicial", None, None, self.cerradura(produccion))
                 break
@@ -43,6 +45,11 @@ class SLR(Automaton):
                     if self.verificarRepetidos(siguiente) == False:
                         #agregar el estado a la lista de estados
                         self.states.AddItem(siguiente)
+
+                        #verificar si el estado siguiente es un estado final
+                        if siguiente.type == "final":
+                            self.finalStates.AddItem(siguiente)
+
                     #agregar transicion
                     self.addTransition(estado, siguiente, symbol)
 
@@ -81,7 +88,19 @@ class SLR(Automaton):
                             producciones.append(produccion)
 
         if len(producciones) > 0:
-            return State(producciones, "normal", None, None, producciones)
+            # si tiene una produccion del estado inical pero con el puntito al final
+
+            for produccion in producciones:
+                if produccion.replace(".", "").strip() == self.start.replace(".", "").strip():
+                    right_part_InitState = self.start.split(".")[1].split()[0].strip()
+                    left_part_produccion = produccion.split(".")[0].split()[-1].strip()
+
+                    if right_part_InitState == left_part_produccion:
+
+                        return State(producciones, "final", None, None, producciones)
+            else:
+
+                return State(producciones, "normal", None, None, producciones)
         
         else:
             return None
