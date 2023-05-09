@@ -1,4 +1,5 @@
 from lexicalAnalyzer.scannerYapal import ScannerYapal
+from lexicalAnalyzer.scannerYalex import ScannerYalex
 from tree.postfix import Postfix
 from tree.tree import Tree
 from automaton.afn import Afn
@@ -17,8 +18,12 @@ alphabet = [str(i) for i in range(256)] # ASCII
 
 def main():
 
+    scanner1 = ScannerYalex('./yalex/slr-1.yal')
+    regex = scanner1.scan()
+
+
     scanner = ScannerYapal('./yapar/slr-1.yalp')
-    tokens,productions = scanner.scan()
+    tokens,productions = scanner.scan(scanner1.tokens)
 
     slr = SLR(tokens,productions)
     slr.SLR()

@@ -14,6 +14,7 @@ class SLR(Automaton):
         self.transitions = []
         self.finalStates = Set()
         self.start = None
+        self.primeroList = []
 
 
     def SLR(self,):
@@ -53,6 +54,8 @@ class SLR(Automaton):
                     #agregar transicion
                     self.addTransition(estado, siguiente, symbol)
 
+        self.pruebas()
+
         self.toString()
         self.toGraph(self, "SLR")
 
@@ -91,7 +94,7 @@ class SLR(Automaton):
             # si tiene una produccion del estado inical pero con el puntito al final
 
             for produccion in producciones:
-                if produccion.replace(".", "").strip() == self.start.replace(".", "").strip():
+                if produccion.replace(".", "").replace(" ", "") == self.start.replace(".", "").replace(" ", ""):
                     right_part_InitState = self.start.split(".")[1].split()[0].strip()
                     left_part_produccion = produccion.split(".")[0].split()[-1].strip()
 
@@ -145,5 +148,26 @@ class SLR(Automaton):
         return False
 
         
+    def pruebas(self):
 
+        for key, value in self.grammar.items():
+            rightpart = key
+            self.primeroList = []
+            self.primero(rightpart)
+            print("primero de " + rightpart + " es: " + str(self.primeroList))
+
+
+    def primero(self, rightpart):
+        for key, value in self.grammar.items():
+            if key.strip() == rightpart.strip():
+                pruducciones = value
+                for produccion in pruducciones:
+
+                    if not produccion.split()[0].strip() == rightpart.strip():
+                        if produccion.split()[0].strip() in self.terminals:
+                            self.primeroList.append(produccion.split()[0])
+                        else:
+                            self.primero(produccion.split()[0])
+
+    
         

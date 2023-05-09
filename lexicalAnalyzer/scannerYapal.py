@@ -3,16 +3,39 @@ class ScannerYapal:
         self.filename = filename
         self.tokens = []
         self.productions = {}
+        self.variablesYalex = []
 
-    def scan(self):
+    def scan(self, variables):
+        
+        for key, value in variables.items():
+            self.variablesYalex.append(value.replace("return","").replace(" ","").strip())
+
         with open(self.filename, 'r') as f:
             content = f.read()
 
         is_parsing_tokens = False
         token = ''
         production = ''
+        inComment = False
+        comentario = ''
 
         for symbol in content:
+
+            if production == '/*':
+                inComment = True
+                production = ''
+                continue
+
+            #comment   =====================================================================
+
+            if inComment:
+                comentario += symbol
+
+                if comentario.__contains__('*/'):
+                    inComment = False
+                    comentario = ''
+                continue
+            
             # parsing tokens =====================================================================
             if is_parsing_tokens:
 
@@ -28,19 +51,18 @@ class ScannerYapal:
 
                             for t in token.split(" "):
                                 t = t.strip()
-                                if "/*" in t and "*/" in t:
-                                    start_index = t.index("/*")
-                                    end_index = t.index("*/", start_index) + 2
-                                    t = t[:start_index] + t[end_index:]
-                                self.tokens.append(t)
+
+                                if (t.strip() in self.variablesYalex):
+                                    self.tokens.append(t)
+                                else:
+                                    raise Exception('Token no definido en Yalex', t)
+                                
 
                         else:
-
-                            if "/*" in token and "*/" in token:
-                                start_index = token.index("/*")
-                                end_index = token.index("*/", start_index) + 2
-                                token = token[:start_index] + token[end_index:]
-                            self.tokens.append(token.strip())
+                            if (token.strip() in self.variablesYalex):
+                                self.tokens.append(token.strip())
+                            else:
+                                raise Exception('Token no definido en Yalex', token)
 
                         token = ''
                         is_parsing_tokens = False
@@ -54,10 +76,6 @@ class ScannerYapal:
             # parsing productions =================================================================
             else:
                 if symbol == ";":
-                    if "/*" in production and "*/" in production:
-                        start_index = production.index("/*")
-                        end_index = production.index("*/", start_index) + 2
-                        production = production[:start_index] + production[end_index:]
 
                     production = production.split(':')
                     lhs = production[0].strip()
@@ -69,6 +87,10 @@ class ScannerYapal:
                 else:
                     if symbol == '%':
                         is_parsing_tokens = True
+
+                    elif symbol == '\n' or symbol == '\t':
+                        pass
+                        
                     else:
                         production += symbol
 
