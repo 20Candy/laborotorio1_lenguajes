@@ -94,11 +94,12 @@ class SLR(Automaton):
             # si tiene una produccion del estado inical pero con el puntito al final
 
             for produccion in producciones:
-                if produccion.replace(".", "").replace(" ", "") == self.start.replace(".", "").replace(" ", ""):
+                if produccion.replace(".", "").strip() == self.start.replace(".", "").strip():
                     right_part_InitState = self.start.split(".")[1].split()[0].strip()
                     left_part_produccion = produccion.split(".")[0].split()[-1].strip()
 
                     if right_part_InitState == left_part_produccion:
+
 
                         return State("\n".join(producciones), "final", None, None, producciones)
             else:
@@ -107,7 +108,6 @@ class SLR(Automaton):
         
         else:
             return None
-
 
     def cerradura(self,produccion):
         producciones = []
@@ -129,6 +129,11 @@ class SLR(Automaton):
 
     def formatSLR(self):
         grammar_array = []
+
+        #gramatica aumentada
+        key = list(self.grammar.keys())[0]
+        grammar_array.append(key + "'" + ' => ' + key)
+
         for nonterminal, productions in self.grammar.items():
             for production in productions:
 

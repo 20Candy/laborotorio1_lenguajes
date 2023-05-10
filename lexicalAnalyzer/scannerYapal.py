@@ -2,6 +2,7 @@ class ScannerYapal:
     def __init__(self, filename):
         self.filename = filename
         self.tokens = []
+        self.ignore = []
         self.productions = {}
         self.variablesYalex = []
 
@@ -35,6 +36,13 @@ class ScannerYapal:
                     inComment = False
                     comentario = ''
                 continue
+
+            # ignore =====================================================================\
+            if "IGNORE" in production:
+                token = production
+                production = ''
+                is_parsing_tokens = True
+
             
             # parsing tokens =====================================================================
             if is_parsing_tokens:
@@ -57,7 +65,6 @@ class ScannerYapal:
                                 else:
                                     raise Exception('Token no definido en Yalex', t)
                                 
-
                         else:
                             if (token.strip() in self.variablesYalex):
                                 self.tokens.append(token.strip())
@@ -66,6 +73,13 @@ class ScannerYapal:
 
                         token = ''
                         is_parsing_tokens = False
+
+                    elif 'IGNORE' in token:
+                        token = token.replace("IGNORE", "").strip()
+                        self.ignore.append(token)
+                        token = ''
+                        is_parsing_tokens = False
+
 
                     else:
                         raise Exception('Error en la declaracion de tokens', token)
