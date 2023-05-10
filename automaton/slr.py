@@ -134,6 +134,8 @@ class SLR(Automaton):
         key = list(self.grammar.keys())[0]
         grammar_array.append(key + "'" + ' => ' + key)
 
+        self.symbols.AddItem(key)
+
         for nonterminal, productions in self.grammar.items():
             for production in productions:
 
