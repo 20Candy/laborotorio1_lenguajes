@@ -172,9 +172,7 @@ class SLR(Automaton):
 
                     if not produccion.split()[0].strip() == rightpart.strip():
                         if produccion.split()[0].strip() in self.terminals:
-                            self.primeroList.append(produccion.split()[0])
+                            if produccion.split()[0] not in self.primeroList:
+                                self.primeroList.append(produccion.split()[0])
                         else:
                             self.primero(produccion.split()[0])
-
-    
-        
