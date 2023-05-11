@@ -14,8 +14,6 @@ class SLR(Automaton):
         self.transitions = []
         self.finalStates = Set()
         self.start = None
-        self.primeroList = []
-
 
     def SLR(self,):
         #estado inicial es la primera produccion de self.producciones que no es un terminal
@@ -153,26 +151,68 @@ class SLR(Automaton):
                 return True
 
         return False
-
-        
+    
     def pruebas(self):
+        for simbolo in self.symbols.elements:
+            primero = self.calcular_primero(simbolo)
+            siguiente = self.calcular_siguiente(simbolo)
 
-        for key, value in self.grammar.items():
-            rightpart = key
-            self.primeroList = []
-            self.primero(rightpart)
-            print("primero de " + rightpart + " es: " + str(self.primeroList))
+            print("Primero de " + simbolo + ": " + str(primero))
+            print("Siguiente de " + simbolo + ": " + str(siguiente))
+            
+
+    def calcular_primero(self, simbolo):
+        primero = set()
+        if simbolo in self.terminals:
+            # Si el símbolo es un terminal, su conjunto primero es simplemente él mismo.
+            primero.add(simbolo)
+            return primero
+        # Si el símbolo es un no terminal, se calcula su conjunto primero.
+        for produccion in self.grammar[simbolo]:
+            # Se itera sobre las producciones del no terminal.
+            primer_simbolo = produccion.split()[0]
+            if primer_simbolo in self.terminals:
+                # Si el primer símbolo de la producción es un terminal, se agrega al conjunto primero del no terminal.
+                primero.add(primer_simbolo)
+            elif primer_simbolo != simbolo:
+                # Si el primer símbolo de la producción es un no terminal distinto al actual, se calcula su conjunto primero
+                # y se une al conjunto primero del no terminal actual.
+                conjunto_primero = self.calcular_primero(primer_simbolo)
+                primero.update(conjunto_primero)
+            else:
+                # Si el primer símbolo de la producción es el no terminal actual, se salta a la siguiente producción.
+                continue
+        return primero
 
 
-    def primero(self, rightpart):
-        for key, value in self.grammar.items():
-            if key.strip() == rightpart.strip():
-                pruducciones = value
-                for produccion in pruducciones:
+    def calcular_siguiente(self, simbolo):
+        siguiente = set()
+        if simbolo == self.start.split()[0]:
+            # Si el símbolo es el símbolo inicial, se agrega el fin de entrada ($) a su conjunto siguiente.
+            siguiente.add('$')
+        for no_terminal in self.grammar:
+            for produccion in self.grammar[no_terminal]:
+                if simbolo in produccion:
+                    # Si el símbolo está en una producción, se busca el siguiente símbolo después de él en la producción.
+                    lista = produccion.split()
+                    simbolo_index = lista.index(simbolo)
 
-                    if not produccion.split()[0].strip() == rightpart.strip():
-                        if produccion.split()[0].strip() in self.terminals:
-                            if produccion.split()[0] not in self.primeroList:
-                                self.primeroList.append(produccion.split()[0])
-                        else:
-                            self.primero(produccion.split()[0])
+                    if simbolo_index == len(lista) - 1:
+                        # Si el símbolo es el último en la producción, se agrega el conjunto siguiente del no terminal
+                        # al conjunto siguiente del símbolo actual.
+                        if no_terminal != simbolo:
+                            conjunto_siguiente = self.calcular_siguiente(no_terminal)
+                            siguiente.update(conjunto_siguiente)
+                    else:
+                        siguiente_simbolo = lista[simbolo_index+1]
+                        conjunto_primero = self.calcular_primero(siguiente_simbolo)
+                        if 'ε' in conjunto_primero:
+                            # Si el siguiente símbolo en la producción tiene como primer elemento "&" (cadena vacía),
+                            # se agrega el conjunto siguiente del no terminal al conjunto siguiente del símbolo actual.
+                            if no_terminal != simbolo:
+                                conjunto_siguiente = self.calcular_siguiente(no_terminal)
+                                siguiente.update(conjunto_siguiente)
+                            conjunto_primero.remove('&')
+                        siguiente.update(conjunto_primero)
+        return siguiente
+
