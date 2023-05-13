@@ -153,53 +153,46 @@ class SLR(Automaton):
         return False
     
     def pruebas(self):
-        for simbolo in self.symbols.elements:
-            primero = self.calcular_primero(simbolo)
-            siguiente = self.calcular_siguiente(simbolo)
 
-            print("Primero de " + simbolo + ": " + str(primero))
-            print("Siguiente de " + simbolo + ": " + str(siguiente))
-            
+        primeros = {}
+        siguientes = {}
+        
+        for simbolo in self.symbols.elements:
+            primeros[simbolo] = self.calcular_primero(simbolo)
+            siguientes[simbolo] = self.calcular_siguiente(simbolo)
+
+        print("Primeros", primeros)
+        print("Siguientes", siguientes)
+           
 
     def calcular_primero(self, simbolo):
         primero = set()
         if simbolo in self.terminals:
-            # Si el símbolo es un terminal, su conjunto primero es simplemente él mismo.
             primero.add(simbolo)
             return primero
-        # Si el símbolo es un no terminal, se calcula su conjunto primero.
         for produccion in self.grammar[simbolo]:
-            # Se itera sobre las producciones del no terminal.
             primer_simbolo = produccion.split()[0]
             if primer_simbolo in self.terminals:
-                # Si el primer símbolo de la producción es un terminal, se agrega al conjunto primero del no terminal.
                 primero.add(primer_simbolo)
             elif primer_simbolo != simbolo:
-                # Si el primer símbolo de la producción es un no terminal distinto al actual, se calcula su conjunto primero
-                # y se une al conjunto primero del no terminal actual.
                 conjunto_primero = self.calcular_primero(primer_simbolo)
                 primero.update(conjunto_primero)
             else:
-                # Si el primer símbolo de la producción es el no terminal actual, se salta a la siguiente producción.
                 continue
         return primero
 
 
     def calcular_siguiente(self, simbolo):
         siguiente = set()
-        if simbolo == self.start.split()[0]:
-            # Si el símbolo es el símbolo inicial, se agrega el fin de entrada ($) a su conjunto siguiente.
+        if simbolo == list(self.grammar.keys())[0]:
             siguiente.add('$')
         for no_terminal in self.grammar:
             for produccion in self.grammar[no_terminal]:
                 if simbolo in produccion:
-                    # Si el símbolo está en una producción, se busca el siguiente símbolo después de él en la producción.
                     lista = produccion.split()
                     simbolo_index = lista.index(simbolo)
 
                     if simbolo_index == len(lista) - 1:
-                        # Si el símbolo es el último en la producción, se agrega el conjunto siguiente del no terminal
-                        # al conjunto siguiente del símbolo actual.
                         if no_terminal != simbolo:
                             conjunto_siguiente = self.calcular_siguiente(no_terminal)
                             siguiente.update(conjunto_siguiente)
@@ -207,8 +200,6 @@ class SLR(Automaton):
                         siguiente_simbolo = lista[simbolo_index+1]
                         conjunto_primero = self.calcular_primero(siguiente_simbolo)
                         if 'ε' in conjunto_primero:
-                            # Si el siguiente símbolo en la producción tiene como primer elemento "&" (cadena vacía),
-                            # se agrega el conjunto siguiente del no terminal al conjunto siguiente del símbolo actual.
                             if no_terminal != simbolo:
                                 conjunto_siguiente = self.calcular_siguiente(no_terminal)
                                 siguiente.update(conjunto_siguiente)
