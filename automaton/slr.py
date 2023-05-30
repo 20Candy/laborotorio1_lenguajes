@@ -224,7 +224,11 @@ class SLR(Automaton):
         for transicion in self.transitions:
             if transicion[2] in simbolos_no_terminales.elements:
                 simbolo = simbolos_no_terminales.elements.index(transicion[2])
-                go_to_table[transicion[0].token][simbolo] = transicion[1].token
+
+                if go_to_table[transicion[0].token][simbolo] is None:
+                    go_to_table[transicion[0].token][simbolo] = transicion[1].token
+                else:
+                    raise Exception("Error en la tabla de go_to")
 
         self.goto_table = go_to_table
 
@@ -235,7 +239,11 @@ class SLR(Automaton):
         for transicion in self.transitions:
             if transicion[2] in simbolos_terminales:
                 simbolo = simbolos_terminales.index(transicion[2])
-                action_table[transicion[0].token][simbolo] = "S" + (transicion[1].token).__str__()
+
+                if action_table[transicion[0].token][simbolo] is None:
+                    action_table[transicion[0].token][simbolo] = "S" + (transicion[1].token).__str__()
+                else:
+                    raise Exception("Error en la tabla de accion")
 
         # llenar la tabla con accept
         for i in range(1, self.states.__len__()):
@@ -243,8 +251,12 @@ class SLR(Automaton):
             for produccion in estado.productions:
                 if produccion.replace(".", "").strip() == self.start.replace(".", "").strip():
                     simbolo = simbolos_terminales.index("$")
-                    action_table[estado.token][simbolo] = "ACCEPT"
-                    i = self.states.__len__()
+
+                    if action_table[estado.token][simbolo] is None:
+                        action_table[estado.token][simbolo] = "ACCEPT"
+                        i = self.states.__len__()
+                    else:
+                        raise Exception("Error en la tabla de accion")
                     break
 
 
