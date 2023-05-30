@@ -5,7 +5,7 @@ from utils.set import Set
 from prettytable import PrettyTable
 
 class SLR(Automaton):
-    def __init__(self, tokens, productions, ignore):
+    def __init__(self, tokens, productions, ignore, simulation, scanner1Tokens):
         self.terminals = tokens
         self.grammar = productions
         self.ignore = ignore
@@ -19,6 +19,8 @@ class SLR(Automaton):
         self.action_table = [[]]
         self.goto_table = [[]]
         self.contador = 0
+        self.cadena = simulation.result
+        self.listaTokens = scanner1Tokens
 
     def SLR(self,):
         #estado inicial es la primera produccion de self.producciones que no es un terminal
@@ -288,9 +290,9 @@ class SLR(Automaton):
             if produccion.replace(".", "").strip().replace(" ","") == p.replace(".", "").strip().replace(" ",""):
                 return i
 
-    def simulacion(self, cadena):
+    def simulacion(self):
         stack = [self.initialState]  # Pila de estados
-        input_symbols = cadena.split()  # Símbolos de entrada
+        input_symbols = self.parseCadena().split()  # Símbolos de entrada
 
         while True:
             state = stack[-1]  # Estado en la cima de la pila
@@ -325,5 +327,13 @@ class SLR(Automaton):
                 return "NO"  # La cadena no es aceptada
 
         return "NO"  # La cadena no es aceptada
+    
+    def parseCadena(self):
+        result = ""
+        for tupla in self.cadena:
+            if tupla[1].replace("#","") in self.listaTokens:
+                result += (self.listaTokens[tupla[1].replace("#","")]).replace("return", "") + " "
+
+        return result.strip()
 
         
