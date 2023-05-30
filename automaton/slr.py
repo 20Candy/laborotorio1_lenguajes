@@ -283,6 +283,9 @@ class SLR(Automaton):
             goto_table.add_row(go_to_table[i])
         print(goto_table)
 
+        self.terminals = simbolos_terminales
+        self.non_terminals = simbolos_no_terminales.elements
+
 
     def buscarEstado(self, produccion):
         for i in range(self.initialState.productions.__len__()):
@@ -296,37 +299,55 @@ class SLR(Automaton):
 
         while True:
             state = stack[-1]  # Estado en la cima de la pila
-            symbol = input_symbols[0]  # Siguiente símbolo de entrada
+
+            # Verificar si hay símbolos de entrada disponibles
+            if input_symbols:
+                symbol = input_symbols[0]  # Siguiente símbolo de entrada
+            else:
+                # No hay más símbolos de entrada, se asume un símbolo vacío ('$')
+                symbol = '$'
 
             # Obtener la acción correspondiente al estado y símbolo actual
             action = self.action_table[state.token][self.terminals.index(symbol)]
 
             if action.startswith("S"):  # Shift
-                next_state = self.states.GetItem(int(action[1:]))
+                next_state = self.GetItem(int(action[1:]))
                 stack.append(next_state)
-                input_symbols = input_symbols[1:]  # Avanzar al siguiente símbolo de entrada
+                input_symbols = input_symbols[1:]  # Consumir el símbolo de entrada
             elif action.startswith("R"):  # Reduce
                 production_index = int(action[1:])
-                production = self.producciones[production_index]
+                production = self.initialState.productions[production_index]
+                lhs, rhs = production.split("=>")
+                lhs = lhs.strip()
+                rhs_symbols = rhs.strip().replace(".","").split()
 
-                left_part, right_part = production.split("=>")
-                right_part_symbols = right_part.split()
-                num_symbols_to_pop = len(right_part_symbols)
+                # Pop |rhs_symbols| symbols from the stack
+                stack = stack[:-len(rhs_symbols)]
 
-                for _ in range(num_symbols_to_pop):
-                    stack.pop()
+                # Get the new top state from the stack
+                top_state = stack[-1]
 
-                next_state = stack[-1]
-                goto_action = self.goto_table[next_state.token][self.symbols.elements.index(left_part)]
+                # Get the next state using GOTO table
+                next_state = self.GetItem(self.goto_table[top_state.token][self.non_terminals.index(lhs)])
 
-                stack.append(State("\n".join(production), "normal", None, None, production.splitlines()))
-                stack.append(self.states.GetItem(goto_action))
+                stack.append(next_state)
+
             elif action == "ACCEPT":  # Aceptación
+                print("Cadena aceptada")
                 return "YES"
             else:
-                return "NO"  # La cadena no es aceptada
+                # Llamar a la rutina de recuperación de errores
+                print("Cadena NO aceptada")
+                return "NO"
 
-        return "NO"  # La cadena no es aceptada
+    def errorRecovery(self):
+        # Implementar la rutina de recuperación de errores aquí
+        print("Error recovery routine")
+    
+    def GetItem(self, token):
+        for estado in self.states.elements:
+            if estado.token == token:
+                return estado
     
     def parseCadena(self):
         result = ""
