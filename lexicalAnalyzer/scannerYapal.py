@@ -108,4 +108,4 @@ class ScannerYapal:
                     else:
                         production += symbol
 
-        return (self.tokens, self.productions)
+        return (self.tokens, self.productions, self.ignore)

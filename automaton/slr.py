@@ -2,11 +2,13 @@ from automaton.automaton import Automaton
 from utils.state import State
 from utils.set import Set
 
+from prettytable import PrettyTable
 
 class SLR(Automaton):
-    def __init__(self, tokens, productions):
+    def __init__(self, tokens, productions, ignore):
         self.terminals = tokens
         self.grammar = productions
+        self.ignore = ignore
         self.symbols = Set()
         self.producciones = self.formatSLR()
         self.initialState = None
@@ -14,6 +16,9 @@ class SLR(Automaton):
         self.transitions = []
         self.finalStates = Set()
         self.start = None
+        self.action_table = [[]]
+        self.goto_table = [[]]
+        self.contador = 0
 
     def SLR(self,):
         #estado inicial es la primera produccion de self.producciones que no es un terminal
@@ -26,12 +31,13 @@ class SLR(Automaton):
                 produccion = produccion[0] + "=>" + produccion[1]
                 self.start = produccion
                 cerradura  = self.cerradura(produccion)
-                self.initialState = State("\n".join(cerradura), "inicial", None, None, self.cerradura(produccion))
+                self.initialState = State("\n".join(cerradura), "inicial", None, self.contador, self.cerradura(produccion))
                 break
 
     
         #agregar estado inicial a la lista de estados
         self.states.AddItem(self.initialState)
+        self.contador += 1
 
         #recorrer estados
         for estado in self.states.elements:
@@ -43,16 +49,21 @@ class SLR(Automaton):
 
                     if self.verificarRepetidos(siguiente) == False:
                         #agregar el estado a la lista de estados
+                        siguiente.token = self.contador
                         self.states.AddItem(siguiente)
+                        self.contador += 1
 
                         #verificar si el estado siguiente es un estado final
                         if siguiente.type == "final":
                             self.finalStates.AddItem(siguiente)
-
+                    else:
+                        for estado1 in self.states.elements:
+                            if siguiente.productions == estado1.productions:
+                                siguiente.token = estado1.token
+                    
                     #agregar transicion
                     self.addTransition(estado, siguiente, symbol)
 
-        self.pruebas()
 
         self.toString()
         self.toGraph(self, "SLR")
@@ -151,20 +162,7 @@ class SLR(Automaton):
                 return True
 
         return False
-    
-    def pruebas(self):
-
-        primeros = {}
-        siguientes = {}
-        
-        for simbolo in self.symbols.elements:
-            primeros[simbolo] = self.calcular_primero(simbolo)
-            siguientes[simbolo] = self.calcular_siguiente(simbolo)
-
-        print("Primeros", primeros)
-        print("Siguientes", siguientes)
-           
-
+              
     def calcular_primero(self, simbolo):
         primero = set()
         if simbolo in self.terminals:
@@ -206,4 +204,80 @@ class SLR(Automaton):
                             conjunto_primero.remove('&')
                         siguiente.update(conjunto_primero)
         return siguiente
+    
+    def tabla(self):
+        # obtener símbolos terminales y no terminales
+        simbolos_terminales = self.terminals + ['$']
+        simbolos_no_terminales = self.symbols.Difference(Set(simbolos_terminales))
+
+        #quitar los que esten en ignore
+        for s in simbolos_terminales:
+            if s in self.ignore:
+                simbolos_terminales.remove(s)
+
+        # inicializar la tabla go_to como una matriz vacía
+        go_to_table = [[None] * len(simbolos_no_terminales) for _ in range(self.states.__len__())]
+
+        # llenar la tabla go_to
+        for transicion in self.transitions:
+            if transicion[2] in simbolos_no_terminales.elements:
+                simbolo = simbolos_no_terminales.elements.index(transicion[2])
+                go_to_table[transicion[0].token][simbolo] = transicion[1].token
+
+        self.goto_table = go_to_table
+
+        # inicializar la tabla action como una matriz vacía
+        action_table = [[None] * len(simbolos_terminales) for _ in range(self.states.__len__())]
+
+        # llenar la tabla action con los shift
+        for transicion in self.transitions:
+            if transicion[2] in simbolos_terminales:
+                simbolo = simbolos_terminales.index(transicion[2])
+                action_table[transicion[0].token][simbolo] = "S" + (transicion[1].token).__str__()
+
+        # llenar la tabla con accept
+        for i in range(1, self.states.__len__()):
+            estado = self.states.elements[i]
+            for produccion in estado.productions:
+                if produccion.replace(".", "").strip() == self.start.replace(".", "").strip():
+                    simbolo = simbolos_terminales.index("$")
+                    action_table[estado.token][simbolo] = "ACCEPT"
+                    i = self.states.__len__()
+                    break
+
+
+        # Llenar la tabla con reduce
+        for i in range(self.states.elements.__len__()):
+            estado = self.states.elements[i]
+            for produccion in estado.productions:
+                if produccion.endswith('.'):
+                    simbolos = produccion.split('=>')[0]
+                    simbolos_no_espacios = simbolos.replace(' ', '')
+                    follow = self.calcular_siguiente(simbolos_no_espacios)
+
+                    for simbolo in follow:
+                        if simbolo in simbolos_terminales:
+                            simbolo_index = simbolos_terminales.index(simbolo)
+                            if action_table[estado.token][simbolo_index] is None:
+                                action_table[estado.token][simbolo_index] = "R" + i.__str__()
+                            else:
+                                raise Exception("Error en la tabla de accion")
+                            
+        self.action_table = action_table
+
+        # Imprimir la tabla de Acción
+        print("\nTabla de Acción:")
+        headers = simbolos_terminales
+        accion_table = PrettyTable(headers)
+        for i in range(self.states.__len__()):
+            accion_table.add_row(action_table[i])
+        print(accion_table)
+
+        # Imprimir la tabla de Goto
+        print("\nTabla de Goto:")
+        headers = simbolos_no_terminales.elements
+        goto_table = PrettyTable(headers)
+        for i in range(self.states.__len__()):
+            goto_table.add_row(go_to_table[i])
+        print(goto_table)
 

@@ -1,845 +1,195 @@
 digraph AFN {
 	rankdir=LR
-	"p' => . p
-p => . t
-t => . m q
-t => . m
-m => . a
-a => . ID ASSIGNOP e" [fillcolor=green shape=square style=filled]
+	"expression' => . expression
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [fillcolor=green shape=square style=filled]
 	"" [height=0 shape=none width=0]
-	"" -> "p' => . p
-p => . t
-t => . m q
-t => . m
-m => . a
-a => . ID ASSIGNOP e"
-	"p' =>  p ." [fillcolor=red shape=square style=filled]
-	"p =>  t ." [shape=square]
-	"t =>  m . q
-t =>  m .
-q => . SEMICOLON m q
-q => . SEMICOLON m" [shape=square]
-	"m =>  a ." [shape=square]
-	"a =>  ID . ASSIGNOP e" [shape=square]
-	"t =>  m  q ." [shape=square]
-	"q =>  SEMICOLON . m q
-q =>  SEMICOLON . m
-m => . a
-a => . ID ASSIGNOP e" [shape=square]
-	"a =>  ID  ASSIGNOP . e
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [shape=square]
-	"q =>  SEMICOLON  m . q
-q =>  SEMICOLON  m .
-q => . SEMICOLON m q
-q => . SEMICOLON m" [shape=square]
-	"f =>  ID ." [shape=square]
-	"a =>  ID  ASSIGNOP  e ." [shape=square]
-	"e =>  x . z
-e =>  x .
-z => . LT x
-z => . EQ x" [shape=square]
-	"x =>  r . w
-x =>  r .
-w => . y w
-w => . y
-y => . PLUS r
-y => . MINUS r" [shape=square]
-	"r =>  f . v
-r =>  f .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" [shape=square]
-	"f =>  LPAREN . e RPAREN
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [shape=square]
-	"f =>  NUMBER ." [shape=square]
-	"q =>  SEMICOLON  m  q ." [shape=square]
-	"e =>  x  z ." [shape=square]
-	"z =>  LT . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [shape=square]
-	"z =>  EQ . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [shape=square]
-	"x =>  r  w ." [shape=square]
-	"w =>  y . w
-w =>  y .
-w => . y w
-w => . y
-y => . PLUS r
-y => . MINUS r" [shape=square]
-	"y =>  PLUS . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [shape=square]
-	"y =>  MINUS . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [shape=square]
-	"r =>  f  v ." [shape=square]
-	"v =>  j . v
-v =>  j .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" [shape=square]
-	"j =>  TIMES . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [shape=square]
-	"j =>  DIV . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [shape=square]
-	"f =>  LPAREN  e . RPAREN" [shape=square]
-	"z =>  LT  x ." [shape=square]
-	"z =>  EQ  x ." [shape=square]
-	"w =>  y  w ." [shape=square]
-	"y =>  PLUS  r ." [shape=square]
-	"y =>  MINUS  r ." [shape=square]
-	"v =>  j  v ." [shape=square]
-	"j =>  TIMES  f ." [shape=square]
-	"j =>  DIV  f ." [shape=square]
-	"f =>  LPAREN  e  RPAREN ." [shape=square]
-	"p' => . p
-p => . t
-t => . m q
-t => . m
-m => . a
-a => . ID ASSIGNOP e" -> "p' =>  p ." [label=p]
-	"p' => . p
-p => . t
-t => . m q
-t => . m
-m => . a
-a => . ID ASSIGNOP e" -> "p =>  t ." [label=t]
-	"p' => . p
-p => . t
-t => . m q
-t => . m
-m => . a
-a => . ID ASSIGNOP e" -> "t =>  m . q
-t =>  m .
-q => . SEMICOLON m q
-q => . SEMICOLON m" [label=m]
-	"p' => . p
-p => . t
-t => . m q
-t => . m
-m => . a
-a => . ID ASSIGNOP e" -> "m =>  a ." [label=a]
-	"p' => . p
-p => . t
-t => . m q
-t => . m
-m => . a
-a => . ID ASSIGNOP e" -> "a =>  ID . ASSIGNOP e" [label=ID]
-	"t =>  m . q
-t =>  m .
-q => . SEMICOLON m q
-q => . SEMICOLON m" -> "t =>  m  q ." [label=q]
-	"t =>  m . q
-t =>  m .
-q => . SEMICOLON m q
-q => . SEMICOLON m" -> "q =>  SEMICOLON . m q
-q =>  SEMICOLON . m
-m => . a
-a => . ID ASSIGNOP e" [label=SEMICOLON]
-	"a =>  ID . ASSIGNOP e" -> "a =>  ID  ASSIGNOP . e
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=ASSIGNOP]
-	"q =>  SEMICOLON . m q
-q =>  SEMICOLON . m
-m => . a
-a => . ID ASSIGNOP e" -> "q =>  SEMICOLON  m . q
-q =>  SEMICOLON  m .
-q => . SEMICOLON m q
-q => . SEMICOLON m" [label=m]
-	"q =>  SEMICOLON . m q
-q =>  SEMICOLON . m
-m => . a
-a => . ID ASSIGNOP e" -> "m =>  a ." [label=a]
-	"q =>  SEMICOLON . m q
-q =>  SEMICOLON . m
-m => . a
-a => . ID ASSIGNOP e" -> "a =>  ID . ASSIGNOP e" [label=ID]
-	"a =>  ID  ASSIGNOP . e
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  ID ." [label=ID]
-	"a =>  ID  ASSIGNOP . e
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "a =>  ID  ASSIGNOP  e ." [label=e]
-	"a =>  ID  ASSIGNOP . e
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "e =>  x . z
-e =>  x .
-z => . LT x
-z => . EQ x" [label=x]
-	"a =>  ID  ASSIGNOP . e
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "x =>  r . w
-x =>  r .
-w => . y w
-w => . y
-y => . PLUS r
-y => . MINUS r" [label=r]
-	"a =>  ID  ASSIGNOP . e
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "r =>  f . v
-r =>  f .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" [label=f]
-	"a =>  ID  ASSIGNOP . e
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  LPAREN . e RPAREN
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=LPAREN]
-	"a =>  ID  ASSIGNOP . e
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  NUMBER ." [label=NUMBER]
-	"q =>  SEMICOLON  m . q
-q =>  SEMICOLON  m .
-q => . SEMICOLON m q
-q => . SEMICOLON m" -> "q =>  SEMICOLON  m  q ." [label=q]
-	"q =>  SEMICOLON  m . q
-q =>  SEMICOLON  m .
-q => . SEMICOLON m q
-q => . SEMICOLON m" -> "q =>  SEMICOLON . m q
-q =>  SEMICOLON . m
-m => . a
-a => . ID ASSIGNOP e" [label=SEMICOLON]
-	"e =>  x . z
-e =>  x .
-z => . LT x
-z => . EQ x" -> "e =>  x  z ." [label=z]
-	"e =>  x . z
-e =>  x .
-z => . LT x
-z => . EQ x" -> "z =>  LT . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=LT]
-	"e =>  x . z
-e =>  x .
-z => . LT x
-z => . EQ x" -> "z =>  EQ . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=EQ]
-	"x =>  r . w
-x =>  r .
-w => . y w
-w => . y
-y => . PLUS r
-y => . MINUS r" -> "x =>  r  w ." [label=w]
-	"x =>  r . w
-x =>  r .
-w => . y w
-w => . y
-y => . PLUS r
-y => . MINUS r" -> "w =>  y . w
-w =>  y .
-w => . y w
-w => . y
-y => . PLUS r
-y => . MINUS r" [label=y]
-	"x =>  r . w
-x =>  r .
-w => . y w
-w => . y
-y => . PLUS r
-y => . MINUS r" -> "y =>  PLUS . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=PLUS]
-	"x =>  r . w
-x =>  r .
-w => . y w
-w => . y
-y => . PLUS r
-y => . MINUS r" -> "y =>  MINUS . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=MINUS]
-	"r =>  f . v
-r =>  f .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" -> "r =>  f  v ." [label=v]
-	"r =>  f . v
-r =>  f .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" -> "v =>  j . v
-v =>  j .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" [label=j]
-	"r =>  f . v
-r =>  f .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" -> "j =>  TIMES . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=TIMES]
-	"r =>  f . v
-r =>  f .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" -> "j =>  DIV . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=DIV]
-	"f =>  LPAREN . e RPAREN
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  ID ." [label=ID]
-	"f =>  LPAREN . e RPAREN
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  LPAREN  e . RPAREN" [label=e]
-	"f =>  LPAREN . e RPAREN
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "e =>  x . z
-e =>  x .
-z => . LT x
-z => . EQ x" [label=x]
-	"f =>  LPAREN . e RPAREN
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "x =>  r . w
-x =>  r .
-w => . y w
-w => . y
-y => . PLUS r
-y => . MINUS r" [label=r]
-	"f =>  LPAREN . e RPAREN
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "r =>  f . v
-r =>  f .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" [label=f]
-	"f =>  LPAREN . e RPAREN
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  LPAREN . e RPAREN
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=LPAREN]
-	"f =>  LPAREN . e RPAREN
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  NUMBER ." [label=NUMBER]
-	"z =>  LT . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  ID ." [label=ID]
-	"z =>  LT . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "z =>  LT  x ." [label=x]
-	"z =>  LT . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "x =>  r . w
-x =>  r .
-w => . y w
-w => . y
-y => . PLUS r
-y => . MINUS r" [label=r]
-	"z =>  LT . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "r =>  f . v
-r =>  f .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" [label=f]
-	"z =>  LT . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  LPAREN . e RPAREN
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=LPAREN]
-	"z =>  LT . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  NUMBER ." [label=NUMBER]
-	"z =>  EQ . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  ID ." [label=ID]
-	"z =>  EQ . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "z =>  EQ  x ." [label=x]
-	"z =>  EQ . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "x =>  r . w
-x =>  r .
-w => . y w
-w => . y
-y => . PLUS r
-y => . MINUS r" [label=r]
-	"z =>  EQ . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "r =>  f . v
-r =>  f .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" [label=f]
-	"z =>  EQ . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  LPAREN . e RPAREN
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=LPAREN]
-	"z =>  EQ . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  NUMBER ." [label=NUMBER]
-	"w =>  y . w
-w =>  y .
-w => . y w
-w => . y
-y => . PLUS r
-y => . MINUS r" -> "w =>  y  w ." [label=w]
-	"w =>  y . w
-w =>  y .
-w => . y w
-w => . y
-y => . PLUS r
-y => . MINUS r" -> "w =>  y . w
-w =>  y .
-w => . y w
-w => . y
-y => . PLUS r
-y => . MINUS r" [label=y]
-	"w =>  y . w
-w =>  y .
-w => . y w
-w => . y
-y => . PLUS r
-y => . MINUS r" -> "y =>  PLUS . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=PLUS]
-	"w =>  y . w
-w =>  y .
-w => . y w
-w => . y
-y => . PLUS r
-y => . MINUS r" -> "y =>  MINUS . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=MINUS]
-	"y =>  PLUS . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  ID ." [label=ID]
-	"y =>  PLUS . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "y =>  PLUS  r ." [label=r]
-	"y =>  PLUS . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "r =>  f . v
-r =>  f .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" [label=f]
-	"y =>  PLUS . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  LPAREN . e RPAREN
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=LPAREN]
-	"y =>  PLUS . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  NUMBER ." [label=NUMBER]
-	"y =>  MINUS . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  ID ." [label=ID]
-	"y =>  MINUS . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "y =>  MINUS  r ." [label=r]
-	"y =>  MINUS . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "r =>  f . v
-r =>  f .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" [label=f]
-	"y =>  MINUS . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  LPAREN . e RPAREN
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=LPAREN]
-	"y =>  MINUS . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  NUMBER ." [label=NUMBER]
-	"v =>  j . v
-v =>  j .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" -> "v =>  j  v ." [label=v]
-	"v =>  j . v
-v =>  j .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" -> "v =>  j . v
-v =>  j .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" [label=j]
-	"v =>  j . v
-v =>  j .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" -> "j =>  TIMES . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=TIMES]
-	"v =>  j . v
-v =>  j .
-v => . j v
-v => . j
-j => . TIMES f
-j => . DIV f" -> "j =>  DIV . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=DIV]
-	"j =>  TIMES . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  ID ." [label=ID]
-	"j =>  TIMES . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "j =>  TIMES  f ." [label=f]
-	"j =>  TIMES . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  LPAREN . e RPAREN
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=LPAREN]
-	"j =>  TIMES . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  NUMBER ." [label=NUMBER]
-	"j =>  DIV . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  ID ." [label=ID]
-	"j =>  DIV . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "j =>  DIV  f ." [label=f]
-	"j =>  DIV . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  LPAREN . e RPAREN
-e => . x z
-e => . x
-x => . r w
-x => . r
-r => . f v
-r => . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" [label=LPAREN]
-	"j =>  DIV . f
-f => . LPAREN e RPAREN
-f => . NUMBER
-f => . ID" -> "f =>  NUMBER ." [label=NUMBER]
-	"f =>  LPAREN  e . RPAREN" -> "f =>  LPAREN  e  RPAREN ." [label=RPAREN]
+	"" -> "expression' => . expression
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID"
+	"expression' =>  expression .
+expression =>  expression . PLUS term" [fillcolor=red shape=square style=filled]
+	"expression =>  term .
+term =>  term . TIMES factor" [shape=square]
+	"term =>  factor ." [shape=square]
+	"factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [shape=square]
+	"factor =>  ID ." [shape=square]
+	"expression =>  expression  PLUS . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [shape=square]
+	"term =>  term  TIMES . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [shape=square]
+	"factor =>  LPAREN  expression . RPAREN
+expression =>  expression . PLUS term" [shape=square]
+	"expression =>  expression  PLUS  term .
+term =>  term . TIMES factor" [shape=square]
+	"term =>  term  TIMES  factor ." [shape=square]
+	"factor =>  LPAREN  expression  RPAREN ." [shape=square]
+	"expression' => . expression
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "expression' =>  expression .
+expression =>  expression . PLUS term" [label=expression]
+	"expression' => . expression
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "expression =>  term .
+term =>  term . TIMES factor" [label=term]
+	"expression' => . expression
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "term =>  factor ." [label=factor]
+	"expression' => . expression
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [label=LPAREN]
+	"expression' => . expression
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  ID ." [label=ID]
+	"expression' =>  expression .
+expression =>  expression . PLUS term" -> "expression =>  expression  PLUS . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [label=PLUS]
+	"expression =>  term .
+term =>  term . TIMES factor" -> "term =>  term  TIMES . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [label=TIMES]
+	"factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  LPAREN  expression . RPAREN
+expression =>  expression . PLUS term" [label=expression]
+	"factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "expression =>  term .
+term =>  term . TIMES factor" [label=term]
+	"factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "term =>  factor ." [label=factor]
+	"factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [label=LPAREN]
+	"factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  ID ." [label=ID]
+	"expression =>  expression  PLUS . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "expression =>  expression  PLUS  term .
+term =>  term . TIMES factor" [label=term]
+	"expression =>  expression  PLUS . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "term =>  factor ." [label=factor]
+	"expression =>  expression  PLUS . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [label=LPAREN]
+	"expression =>  expression  PLUS . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  ID ." [label=ID]
+	"term =>  term  TIMES . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "term =>  term  TIMES  factor ." [label=factor]
+	"term =>  term  TIMES . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [label=LPAREN]
+	"term =>  term  TIMES . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  ID ." [label=ID]
+	"factor =>  LPAREN  expression . RPAREN
+expression =>  expression . PLUS term" -> "expression =>  expression  PLUS . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [label=PLUS]
+	"factor =>  LPAREN  expression . RPAREN
+expression =>  expression . PLUS term" -> "factor =>  LPAREN  expression  RPAREN ." [label=RPAREN]
+	"expression =>  expression  PLUS  term .
+term =>  term . TIMES factor" -> "term =>  term  TIMES . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [label=TIMES]
 }
