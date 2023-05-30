@@ -1,109 +1,195 @@
 digraph AFN {
 	rankdir=LR
-	"s' => . s
-s => . l EQUALS r
-s => . r
-l => . TIMES r
-l => . ID
-r => . l" [fillcolor=green shape=square style=filled]
+	"expression' => . expression
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [fillcolor=green shape=square style=filled]
 	"" [height=0 shape=none width=0]
-	"" -> "s' => . s
-s => . l EQUALS r
-s => . r
-l => . TIMES r
-l => . ID
-r => . l"
-	"s' =>  s ." [fillcolor=red shape=square style=filled]
-	"s =>  l . EQUALS r
-r =>  l ." [shape=square]
-	"s =>  r ." [shape=square]
-	"l =>  TIMES . r
-r => . l
-l => . TIMES r
-l => . ID" [shape=square]
-	"l =>  ID ." [shape=square]
-	"s =>  l  EQUALS . r
-r => . l
-l => . TIMES r
-l => . ID" [shape=square]
-	"r =>  l ." [shape=square]
-	"l =>  TIMES  r ." [shape=square]
-	"s =>  l  EQUALS  r ." [shape=square]
-	"s' => . s
-s => . l EQUALS r
-s => . r
-l => . TIMES r
-l => . ID
-r => . l" -> "s' =>  s ." [label=s]
-	"s' => . s
-s => . l EQUALS r
-s => . r
-l => . TIMES r
-l => . ID
-r => . l" -> "s =>  l . EQUALS r
-r =>  l ." [label=l]
-	"s' => . s
-s => . l EQUALS r
-s => . r
-l => . TIMES r
-l => . ID
-r => . l" -> "s =>  r ." [label=r]
-	"s' => . s
-s => . l EQUALS r
-s => . r
-l => . TIMES r
-l => . ID
-r => . l" -> "l =>  TIMES . r
-r => . l
-l => . TIMES r
-l => . ID" [label=TIMES]
-	"s' => . s
-s => . l EQUALS r
-s => . r
-l => . TIMES r
-l => . ID
-r => . l" -> "l =>  ID ." [label=ID]
-	"s =>  l . EQUALS r
-r =>  l ." -> "s =>  l  EQUALS . r
-r => . l
-l => . TIMES r
-l => . ID" [label=EQUALS]
-	"l =>  TIMES . r
-r => . l
-l => . TIMES r
-l => . ID" -> "r =>  l ." [label=l]
-	"l =>  TIMES . r
-r => . l
-l => . TIMES r
-l => . ID" -> "l =>  TIMES  r ." [label=r]
-	"l =>  TIMES . r
-r => . l
-l => . TIMES r
-l => . ID" -> "l =>  TIMES . r
-r => . l
-l => . TIMES r
-l => . ID" [label=TIMES]
-	"l =>  TIMES . r
-r => . l
-l => . TIMES r
-l => . ID" -> "l =>  ID ." [label=ID]
-	"s =>  l  EQUALS . r
-r => . l
-l => . TIMES r
-l => . ID" -> "r =>  l ." [label=l]
-	"s =>  l  EQUALS . r
-r => . l
-l => . TIMES r
-l => . ID" -> "s =>  l  EQUALS  r ." [label=r]
-	"s =>  l  EQUALS . r
-r => . l
-l => . TIMES r
-l => . ID" -> "l =>  TIMES . r
-r => . l
-l => . TIMES r
-l => . ID" [label=TIMES]
-	"s =>  l  EQUALS . r
-r => . l
-l => . TIMES r
-l => . ID" -> "l =>  ID ." [label=ID]
+	"" -> "expression' => . expression
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID"
+	"expression' =>  expression .
+expression =>  expression . PLUS term" [fillcolor=red shape=square style=filled]
+	"expression =>  term .
+term =>  term . TIMES factor" [shape=square]
+	"term =>  factor ." [shape=square]
+	"factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [shape=square]
+	"factor =>  ID ." [shape=square]
+	"expression =>  expression  PLUS . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [shape=square]
+	"term =>  term  TIMES . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [shape=square]
+	"factor =>  LPAREN  expression . RPAREN
+expression =>  expression . PLUS term" [shape=square]
+	"expression =>  expression  PLUS  term .
+term =>  term . TIMES factor" [shape=square]
+	"term =>  term  TIMES  factor ." [shape=square]
+	"factor =>  LPAREN  expression  RPAREN ." [shape=square]
+	"expression' => . expression
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "expression' =>  expression .
+expression =>  expression . PLUS term" [label=expression]
+	"expression' => . expression
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "expression =>  term .
+term =>  term . TIMES factor" [label=term]
+	"expression' => . expression
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "term =>  factor ." [label=factor]
+	"expression' => . expression
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [label=LPAREN]
+	"expression' => . expression
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  ID ." [label=ID]
+	"expression' =>  expression .
+expression =>  expression . PLUS term" -> "expression =>  expression  PLUS . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [label=PLUS]
+	"expression =>  term .
+term =>  term . TIMES factor" -> "term =>  term  TIMES . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [label=TIMES]
+	"factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  LPAREN  expression . RPAREN
+expression =>  expression . PLUS term" [label=expression]
+	"factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "expression =>  term .
+term =>  term . TIMES factor" [label=term]
+	"factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "term =>  factor ." [label=factor]
+	"factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [label=LPAREN]
+	"factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  ID ." [label=ID]
+	"expression =>  expression  PLUS . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "expression =>  expression  PLUS  term .
+term =>  term . TIMES factor" [label=term]
+	"expression =>  expression  PLUS . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "term =>  factor ." [label=factor]
+	"expression =>  expression  PLUS . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [label=LPAREN]
+	"expression =>  expression  PLUS . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  ID ." [label=ID]
+	"term =>  term  TIMES . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "term =>  term  TIMES  factor ." [label=factor]
+	"term =>  term  TIMES . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  LPAREN . expression RPAREN
+expression => . expression PLUS term
+expression => . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [label=LPAREN]
+	"term =>  term  TIMES . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" -> "factor =>  ID ." [label=ID]
+	"factor =>  LPAREN  expression . RPAREN
+expression =>  expression . PLUS term" -> "expression =>  expression  PLUS . term
+term => . term TIMES factor
+term => . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [label=PLUS]
+	"factor =>  LPAREN  expression . RPAREN
+expression =>  expression . PLUS term" -> "factor =>  LPAREN  expression  RPAREN ." [label=RPAREN]
+	"expression =>  expression  PLUS  term .
+term =>  term . TIMES factor" -> "term =>  term  TIMES . factor
+factor => . LPAREN expression RPAREN
+factor => . ID" [label=TIMES]
 }

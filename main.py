@@ -18,16 +18,25 @@ alphabet = [str(i) for i in range(256)] # ASCII
 
 def main():
 
-    scanner1 = ScannerYalex('./pruebas_lab_f/slr-3.yal')
+    scanner1 = ScannerYalex('./pruebas_lab_f/slr-1.yal')
     regex = scanner1.scan()
 
 
-    scanner = ScannerYapal('./pruebas_lab_f/slr-3.yalp')
+    scanner = ScannerYapal('./pruebas_lab_f/slr-1.yalp')
     tokens,productions, ignore = scanner.scan(scanner1.tokens)
 
     slr = SLR(tokens,productions,ignore)
     slr.SLR()
     slr.tabla()
+
+    with open('./pruebas_lab_f/input.txt', 'r') as file:
+        contenido = file.read()
+
+    slr.simulacion(contenido)
+    
+    
+    
+    
 
 
 

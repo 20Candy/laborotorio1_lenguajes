@@ -281,3 +281,43 @@ class SLR(Automaton):
             goto_table.add_row(go_to_table[i])
         print(goto_table)
 
+
+    def simulacion(self, cadena):
+        stack = [self.initialState]  # Pila de estados
+        input_symbols = cadena.split()  # Símbolos de entrada
+
+        while True:
+            state = stack[-1]  # Estado en la cima de la pila
+            symbol = input_symbols[0]  # Siguiente símbolo de entrada
+
+            # Obtener la acción correspondiente al estado y símbolo actual
+            action = self.action_table[state.token][self.terminals.index(symbol)]
+
+            if action.startswith("S"):  # Shift
+                next_state = self.states.GetItem(int(action[1:]))
+                stack.append(next_state)
+                input_symbols = input_symbols[1:]  # Avanzar al siguiente símbolo de entrada
+            elif action.startswith("R"):  # Reduce
+                production_index = int(action[1:])
+                production = self.producciones[production_index]
+
+                left_part, right_part = production.split("=>")
+                right_part_symbols = right_part.split()
+                num_symbols_to_pop = len(right_part_symbols)
+
+                for _ in range(num_symbols_to_pop):
+                    stack.pop()
+
+                next_state = stack[-1]
+                goto_action = self.goto_table[next_state.token][self.symbols.elements.index(left_part)]
+
+                stack.append(State("\n".join(production), "normal", None, None, production.splitlines()))
+                stack.append(self.states.GetItem(goto_action))
+            elif action == "ACCEPT":  # Aceptación
+                return "YES"
+            else:
+                return "NO"  # La cadena no es aceptada
+
+        return "NO"  # La cadena no es aceptada
+
+        
