@@ -259,7 +259,7 @@ class SLR(Automaton):
                         if simbolo in simbolos_terminales:
                             simbolo_index = simbolos_terminales.index(simbolo)
                             if action_table[estado.token][simbolo_index] is None:
-                                action_table[estado.token][simbolo_index] = "R" + i.__str__()
+                                action_table[estado.token][simbolo_index] = "R" + self.buscarEstado(produccion).__str__()
                             else:
                                 raise Exception("Error en la tabla de accion")
                             
@@ -281,6 +281,12 @@ class SLR(Automaton):
             goto_table.add_row(go_to_table[i])
         print(goto_table)
 
+
+    def buscarEstado(self, produccion):
+        for i in range(self.initialState.productions.__len__()):
+            p = self.initialState.productions[i]
+            if produccion.replace(".", "").strip().replace(" ","") == p.replace(".", "").strip().replace(" ",""):
+                return i
 
     def simulacion(self, cadena):
         stack = [self.initialState]  # Pila de estados
