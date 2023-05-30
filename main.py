@@ -31,7 +31,7 @@ def main():
     direct = direct.Direct(postfix)    
 
     
-    with open('./pruebas_lab_f/input1SI.txt', 'r') as file:
+    with open('./pruebas_lab_f/input3NO.txt', 'r') as file:
         contenido = file.read()
 
     simulation = Simulation(direct, contenido)

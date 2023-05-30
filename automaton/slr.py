@@ -310,6 +310,11 @@ class SLR(Automaton):
             # Obtener la acción correspondiente al estado y símbolo actual
             action = self.action_table[state.token][self.terminals.index(symbol)]
 
+            if action is None:  # Error
+                # Llamar a la rutina de recuperación de errores
+                print("Cadena NO aceptada")
+                return "NO"
+
             if action.startswith("S"):  # Shift
                 next_state = self.GetItem(int(action[1:]))
                 stack.append(next_state)
