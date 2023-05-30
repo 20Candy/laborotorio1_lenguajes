@@ -31,7 +31,7 @@ def main():
     direct = direct.Direct(postfix)    
 
     
-    with open('./pruebas_lab_f/input.txt', 'r') as file:
+    with open('./pruebas_lab_f/input1SI.txt', 'r') as file:
         contenido = file.read()
 
     simulation = Simulation(direct, contenido)
@@ -42,6 +42,8 @@ def main():
     slr = SLR(tokens,productions,ignore, simulation, scanner1.tokens)
     slr.SLR()
     slr.tabla()
+
+    print("\nSimulacion: " + contenido)
     slr.simulacion()
 
     
