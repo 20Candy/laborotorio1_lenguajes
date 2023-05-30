@@ -21,7 +21,6 @@ def main():
     scanner1 = ScannerYalex('./pruebas_lab_f/slr-3.yal')
     regex = scanner1.scan()
 
-
     scanner = ScannerYapal('./pruebas_lab_f/slr-3.yalp')
     tokens,productions, ignore = scanner.scan(scanner1.tokens)
 
