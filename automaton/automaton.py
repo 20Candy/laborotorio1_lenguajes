@@ -45,19 +45,19 @@ class Automaton:
 
         for state in automaton.states.elements:
             if state.type == 'inicial':
-                g.node(str(state.id), shape='circle')
+                g.node(str(state.id), shape='square', style='filled', fillcolor='green')
                 g.node ('', shape='none', height='0', width='0')
                 g.edge('', str(state.id))
 
             elif state.type == 'final_inicial':
-                g.node(str(state.id), shape='doublecircle')
+                g.node(str(state.id), shape='square', style='filled', fillcolor='red')
                 g.node ('', shape='none', height='0', width='0')
                 g.edge('', str(state.id))
 
             elif state.type == 'final':
-                g.node(str(state.id), shape='doublecircle')
+                g.node(str(state.id), shape='square', style='filled', fillcolor='red')
             else:
-                g.node(str(state.id), shape='circle')
+                g.node(str(state.id), shape='square')
                 
 
         for transition in automaton.transitions:

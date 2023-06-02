@@ -1,3 +1,5 @@
+from lexicalAnalyzer.scannerYapal import ScannerYapal
+from lexicalAnalyzer.scannerYalex import ScannerYalex
 from tree.postfix import Postfix
 from tree.tree import Tree
 from automaton.afn import Afn
@@ -6,8 +8,8 @@ from automaton.minimization import Minimization
 from automaton.direct import Direct
 from automaton.simulation import Simulation
 from simulacion.simulacion import tokens
+from automaton.slr import SLR
 
-from lexicalAnalyzer.scanner import Scanner
 
 #alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'ε', 'E', 'ϵ']
 operators = ['|', '*', '+', '?', '(', ')', '•']
@@ -16,12 +18,11 @@ alphabet = [str(i) for i in range(256)] # ASCII
 
 def main():
 
-    scanner = Scanner('./yalex/slr-4.yal')
-    scanner.scan()
-    postfix = Postfix(scanner, alphabet, operators, precedence)
-    postfix = postfix.ConvertToPostfix()
+    scanner1 = ScannerYalex('./pruebas_lab_f/slr-1.yal')
+    regex = scanner1.scan()
 
-    print(postfix)
+    postfix = Postfix(scanner1, alphabet, operators, precedence)
+    postfix = postfix.ConvertToPostfix()
 
     tree = Tree(postfix)
     tree.BuildTree()
@@ -29,41 +30,30 @@ def main():
     direct = Direct()
     direct = direct.Direct(postfix)    
 
-    test = "./pruebas/prueba.txt"
-    with open(test, "r") as archivo:
-        contenido = archivo.read()
+    
+    with open('./pruebas_lab_f/input3NO.txt', 'r') as file:
+        contenido = file.read()
 
-
-    print("\n==================================SIMULACION==================================")   
-    #crear archivo simulacion.py
-    with open('./simulacion/simulacion.py', 'w') as f:
-        f.write('def tokens(listaTokens):\n')
-        f.write('\tfor tokenValue in listaTokens: \n')
-        f.write('\t\ttoken = tokenValue[1].replace("#","") \n')
-
-        for i, (key, value) in enumerate(scanner.tokens.items()):
-            if i == 0:
-                f.write('\t\tif token == ' + repr(key) + ':\n')
-            else:
-
-                f.write('\t\telif token == ' + repr(key) + ':\n')
-                
-            if value == '':
-                f.write('\t\t\treturn None\n')
-            else:
-                f.write('\t\t\t' + value + '\n')
-
-        f.write('\t\telse: \n\t\t\tprint(' + '"Error sintactico"' + ')')
-
-    #crear simulacion
     simulation = Simulation(direct, contenido)
 
-    #mandar simulacion a simulacion.py
-    print(tokens(simulation.result))
+    scanner = ScannerYapal('./pruebas_lab_f/slr-1.yalp')
+    tokens,productions, ignore = scanner.scan(scanner1.tokens)
 
+    slr = SLR(tokens,productions,ignore, simulation, scanner1.tokens)
+    slr.SLR()
+    slr.tabla()
+
+    print("\nSimulacion: " + contenido)
+    slr.simulacion()
 
     
-
-
 if __name__ == "__main__":
     main()
+
+
+
+
+
+
+
+

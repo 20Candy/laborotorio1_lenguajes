@@ -1,6 +1,6 @@
 from utils.simbolo import Simbolo
 
-class Scanner:
+class ScannerYalex:
     def __init__(self, filename):
         self.filename = filename
         self.variables = {}
