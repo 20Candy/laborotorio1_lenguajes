@@ -182,7 +182,11 @@ class SLR(Automaton):
         return primero
 
 
-    def calcular_siguiente(self, simbolo):
+    def calcular_siguiente(self, simbolo, iter = 0):
+
+        if iter > 100:
+            return set()
+        
         siguiente = set()
         if simbolo == list(self.grammar.keys())[0]:
             siguiente.add('$')
@@ -194,14 +198,14 @@ class SLR(Automaton):
 
                     if simbolo_index == len(lista) - 1:
                         if no_terminal != simbolo:
-                            conjunto_siguiente = self.calcular_siguiente(no_terminal)
+                            conjunto_siguiente = self.calcular_siguiente(no_terminal, iter + 1)
                             siguiente.update(conjunto_siguiente)
                     else:
                         siguiente_simbolo = lista[simbolo_index+1]
                         conjunto_primero = self.calcular_primero(siguiente_simbolo)
                         if 'ε' in conjunto_primero:
                             if no_terminal != simbolo:
-                                conjunto_siguiente = self.calcular_siguiente(no_terminal)
+                                conjunto_siguiente = self.calcular_siguiente(no_terminal, iter + 1)
                                 siguiente.update(conjunto_siguiente)
                             conjunto_primero.remove('&')
                         siguiente.update(conjunto_primero)
@@ -275,7 +279,7 @@ class SLR(Automaton):
                             if action_table[estado.token][simbolo_index] is None:
                                 action_table[estado.token][simbolo_index] = "R" + self.buscarEstado(produccion).__str__()
                             else:
-                                raise Exception("Error en la tabla de accion")
+                                raise Exception("Error en la tabla de accion" + "[" + estado.token.__str__() + ", " + simbolo + "] = " + "(" + action_table[estado.token][simbolo_index] + ", " + "R" + self.buscarEstado(produccion).__str__() + ")")
                             
         self.action_table = action_table
 

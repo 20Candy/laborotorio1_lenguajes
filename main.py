@@ -18,7 +18,7 @@ alphabet = [str(i) for i in range(256)] # ASCII
 
 def main():
 
-    scanner1 = ScannerYalex('./pruebas_lab_f/slr-1.yal')
+    scanner1 = ScannerYalex('./pruebas_lab_f/lab-f.yal')
     regex = scanner1.scan()
 
     postfix = Postfix(scanner1, alphabet, operators, precedence)
@@ -36,7 +36,7 @@ def main():
 
     simulation = Simulation(direct, contenido)
 
-    scanner = ScannerYapal('./pruebas_lab_f/slr-1.yalp')
+    scanner = ScannerYapal('./pruebas_lab_f/lab-f.yalp')
     tokens,productions, ignore = scanner.scan(scanner1.tokens)
 
     slr = SLR(tokens,productions,ignore, simulation, scanner1.tokens)
